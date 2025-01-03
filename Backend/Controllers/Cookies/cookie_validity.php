@@ -5,9 +5,12 @@ function isTokenValid($token)
 {
     $mysqli = require __DIR__ . "/../../Database/connection.php";
 
-    $cookie_query = "SELECT * FROM admins WHERE session_id = ?"; //Query per selezionare il cookie
+    $cookie_query = "SELECT * FROM admins WHERE session_id = ? AND cookie_expiry > ?"; //Query per selezionare il cookie
     $stmt = $mysqli->prepare($cookie_query); //Preparazione della query
-    $stmt->bind_param("s", $token); //Binding dei parametri
+
+    $current_time = time(); //Tempo attuale
+
+    $stmt->bind_param("si", $token, $current_time); //Binding dei parametri
     $stmt->execute();
 
     $result = $stmt->get_result();
@@ -21,13 +24,13 @@ function isTokenValid($token)
     }
 }
 
-if(!isset($_COOKIE["session_id"])) {
+if(!isset($_COOKIE["auth_token"])) {
     //Se non c'è il cookie, reindirizza alla pagina di login
     header("Location: ../../../Frontend/pages/logAdmin.html");
     exit();
 }
 
-$SessionId = $_COOKIE["session_id"];
+$SessionId = $_COOKIE["auth_token"];
 if (!isTokenValid($SessionId)) {
     //Se il cookie non è valido, reindirizza alla pagina di login
     header("Location: ../../../Frontend/pages/logAdmin.html");

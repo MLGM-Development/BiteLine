@@ -2,7 +2,28 @@
 //Dati di connessione al database
 $mysqli = require __DIR__ . "/../../../../Backend/Database/connection.php";
 
-$session_query = $mysqli->real_escape_string($_COOKIE['auth_token']) //Query per selezionare l'admin
+if (!isset($_COOKIE['auth_token'])) {
+    //Se non c'è il cookie, reindirizza alla pagina di login
+    header("Location: ../logAdmin.html");
+    exit();
+}else{
+    $session_code = $mysqli->real_escape_string($_COOKIE['auth_token']); //Query per selezionare l'admin
+
+    $verify_query = "SELECT * FROM admins WHERE session_id = ?"; //Query per selezionare l'admin
+    $stmt = $mysqli->prepare($verify_query); //Preparazione della query
+    $stmt->bind_param("s", $session_code); //Binding dei parametri
+    $stmt->execute();
+    $result = $stmt->get_result(); //Esecuzione della query
+
+    if ($result->num_rows < 1) {
+        //Se non ci sono risultati, il cookie non è valido
+        header("Location: ../logAdmin.html");
+
+    }else{
+        $admin = $result->fetch_assoc(); //Fetch dell'admin
+    }
+}
+
 ?>
 
 <!doctype html>
