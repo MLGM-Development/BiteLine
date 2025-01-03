@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Registrazione Admin | BiteLine</title>
+</head>
+<body>
+<!--
+                                                     Form di registrazione
+    Per chiunque farà il frontend ricordate di tenere il tag form in modo tale che contenga gli input, poi spostateli
+    e fate quello che volete, mi raccomando non modificate ne gli id ne i name di nessun input sono essenziali per il
+    funzionamento della registrazione.
+
+-->
+    <form action="../../../Backend/Controllers/SessionControllers/signup.php" method="post">
+        <label for="name">Nome</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="surname">Cognome</label>
+        <input type="text" id="surname" name="surname" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+
+        <input type="submit" value="Registrati">
+    </form>
+</body>
+</html>
