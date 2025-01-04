@@ -1,0 +1,8 @@
+/* Questo viene incorporato alle pagine, nel browser interagirà anche con gli elementi dell'homepage, quindi usate classi e ID */
+
+header {
+    margin: 0;
+    border: 0;
+    box-sizing: border-box;
+    padding: 0;
+}

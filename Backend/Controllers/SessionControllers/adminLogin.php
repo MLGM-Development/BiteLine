@@ -17,17 +17,17 @@ if($result->num_rows === 0) {
         //Imposto la sessione associando l'id dell'admin alla sessione admin
         $_SESSION["admin"] = $user["admin_id"];
 
-        $sessionId = bin2hex(random_bytes(32));
+        $sessionId = bin2hex(random_bytes(32)); //Generazione del cookie
         $expireTime = time() + 2592000; //30 giorni di validità del cookie
 
-        $sessionId_query = "UPDATE admins SET session_id = ?, cookie_expiry = ? WHERE admin_id = ?";
+        $sessionId_query = "UPDATE admins SET session_id = ?, cookie_expiry = ? WHERE admin_id = ?"; //viene inserito il cookie nel database
         $stmt = $mysqli->prepare($sessionId_query);
         $stmt->bind_param("sii", $sessionId, $expireTime, $user["admin_id"]);
         $stmt->execute();
 
-        setcookie("auth_token", $sessionId, $expireTime, "/");
+        setcookie("auth_token", $sessionId, $expireTime, "/"); //Impostazione del cookie
 
-        header("Location: ../../../Frontend/pages/admins/adminControls/adminPage.php");
+        header("Location: ../../../Frontend/pages/admins/adminControls/adminPage.php"); //Reindirizzamento alla pagina dell'admin
         exit();
     }else{
         echo "Password errata";
