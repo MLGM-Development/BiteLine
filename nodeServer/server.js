@@ -1,12 +1,17 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
+const authRoutes = require('./routes/authRoutes');
+
 const app = express();
 
-// Esempio di endpoint Node.js
-app.get('/node-api/test', (req, res) => {
-    res.json({ message: 'Ciao dal server Node.js!' });
-});
+// Middleware
+app.use(express.json());
+app.use(cookieParser());
 
-// Porta in ascolto
+// Rotte
+app.use('/node-api', authRoutes);
+
+// Avvio del server
 app.listen(3000, () => {
-    console.log('Server Node.js in ascolto sulla porta 3000');
+    console.log('Server Node.js in ascolto su http://localhost:3000');
 });
