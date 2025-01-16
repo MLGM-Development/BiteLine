@@ -1,13 +1,14 @@
 // Seleziona il form
-const loginForm = document.getElementById('loginForm');
+const loginForm = document.querySelector('#loginForm');
 
 // Aggiungi un event listener per il submit
 loginForm.addEventListener('submit', async (event) => {
     event.preventDefault(); // Previene il ricaricamento della pagina
 
     // Raccogli i dati dal form
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    const email = document.querySelector('#email').value;
+    const password = document.querySelector('#password').value;
+    const role = document.querySelector('#role').value
 
     try {
         // Invio della richiesta al backend
@@ -16,16 +17,14 @@ loginForm.addEventListener('submit', async (event) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ email, password, role }),
         });
 
         const data = await response.json();
 
         if (response.ok) {
-            // Login riuscito
-            alert('Login effettuato con successo!');
             // Reindirizza alla pagina admin
-            window.location.href = '/BiteLine/Frontend/pages/admins/adminControls/adminPage.php';
+            window.location.href = data.redirectUrl;
         } else {
             // Errore durante il login
             alert(`Errore: ${data.error}`);

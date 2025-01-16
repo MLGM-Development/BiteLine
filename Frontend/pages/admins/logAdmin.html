@@ -10,12 +10,18 @@
 <body>
     <header id="header"></header>
     <h1>Accedi come amministratore</h1>
-    <form id="loginForm">
+    <form id="loginForm" method="post">
         <label for="email">Email</label>
         <input type="email" name="email" id="email" required>
 
         <label for="password">Password</label>
         <input type="password" name="password" id="password" required>
+
+        <label for="role"></label>
+        <select name="role" id="role">
+            <option value="admin">Admin</option>
+            <option value="owner">Proprietario</option>
+        </select>
 
         <button type="submit">Accedi</button>
     </form>

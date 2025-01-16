@@ -45,7 +45,7 @@ if(strlen($_POST["surname"]) < 2) {
 //Funzione per cryptare la password dell'admin
 $hash = password_hash($_POST["password"], PASSWORD_DEFAULT);
 
-$query = $mysqli->prepare("INSERT INTO owners (name, l_name, mail, password) VALUES (?, ?, ?, ?)");
+$query = $mysqli->prepare("INSERT INTO owners (name, l_name, email, password) VALUES (?, ?, ?, ?)");
 $query->bind_param("ssss", $_POST["name"], $_POST["surname"], $_POST["email"], $hash);
 $query->execute();
 $query->close();

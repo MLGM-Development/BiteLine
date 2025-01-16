@@ -4,23 +4,26 @@ const connectDatabase = require('../config/dbConfig') //Importo la connessione a
 
 //Funsione per il login
 const login = async (req, res) => {
-    const {email, password} = req.body //Prendo i valori degli input del body
+    const {email, password, role} = req.body //Prendo i valori degli input del body
 
-    if(!email || !password) {
+    if(!email || !password || !role) {
         //se l'utente non ha inserito nulla allora avrà un messaggio d'errore http (verifica backend)
-        return res.status(400).json({error: 'Email e/o password sono richiesti'})
+        return res.status(400).json({error: 'Email, password e/o Ruolo sono richiesti'})
     }
-
 
     try {
         //se ha inserito tutto allora si procede con la connessione al database
         const connection = await connectDatabase;
+        const tableName = role === 'admin' ? 'admins':'owners';
+        const idFiled = role === 'admin' ? 'admin':'owner';
 
-        //Controllo della mail dell'utente
-        const [rows] = await connection.execute(
-            'SELECT * FROM admins WHERE email = ?',
-            [email]
-        )
+        const queryRetriever = `
+            SELECT ${idFiled}_id AS id, email, password
+            FROM ${tableName}
+            WHERE email = ?
+        `;
+
+        const [rows] = await connection.execute(queryRetriever, [email])
 
         //si confronta il database se la mail non l'ha trovata allora da errore
         if(rows.length === 0) {
@@ -34,12 +37,7 @@ const login = async (req, res) => {
         let compatibleHash = user.password.replace('$2y$', '$2a$')
         const isPasswordCorrect = await bcrypt.compare(password, compatibleHash)
         if (!isPasswordCorrect) {
-            console.error(user.password)
-            return res.status(401).json({
-                error: 'Password errata'
-            })
-
-
+            return res.status(401).json({error: 'Password errata'})
         }
 
         //Creazione del cookie
@@ -48,8 +46,8 @@ const login = async (req, res) => {
 
         //Mi connetto al db e updato gli admin con cookie
         await connection.execute(
-            'UPDATE admins SET session_id = ?, cookie_expiry = ? WHERE admin_id = ?',
-            [sessionId, expiry, user.admin_id]
+            `UPDATE ${role}s SET session_id = ?, cookie_expiry = ? WHERE ${role}_id = ?`,
+            [sessionId, expiry, user.id]
         )
 
         //Creo il cookie di sessione per il browser
@@ -59,7 +57,15 @@ const login = async (req, res) => {
             path: '/'
         })
 
-        res.json({message: 'Login effettuato con successo'})
+        const redirectUrl =
+            role === 'admin'
+            ? '/BiteLine/Frontend/pages/admins/adminControls/adminPage.php'
+            : '/BiteLine/Frontend/pages/users/Owners/ownersControls/ownerPage.php'
+
+        res.json({
+            message: `Login effettuato con successo come ${role}`,
+            redirectUrl: redirectUrl
+        })
     }catch (e){
         //Catch degli errori interni del server
         console.error(e)
