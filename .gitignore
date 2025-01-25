@@ -1,1 +1,8 @@
 .env
+composer.json
+composer.lock
+struttura_cartelle.txt
+vendor
+nodeServer/node_modules
+nodeServer/package.json
+nodeServer/package-lock.json
