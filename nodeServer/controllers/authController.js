@@ -14,8 +14,25 @@ const login = async (req, res) => {
     try {
         //se ha inserito tutto allora si procede con la connessione al database
         const connection = await connectDatabase;
-        const tableName = role === 'admin' ? 'admins':'owners';
-        const idFiled = role === 'admin' ? 'admin':'owner';
+        let tableName
+        let idFiled
+
+        switch (role){
+            case 'admin':
+                tableName = 'admins'
+                idFiled = 'admin'
+                break;
+            case 'owner':
+                tableName = 'owners'
+                idFiled = 'owner'
+                break;
+            case 'customer':
+                tableName = 'customers'
+                idFiled = 'customer'
+                break;
+            default:
+                res.status(404).json({error: 'Ruolo non trovato'})
+        }
 
         const queryRetriever = `
             SELECT ${idFiled}_id AS id, email, password
@@ -34,7 +51,7 @@ const login = async (req, res) => {
         const user = rows[0]
 
         //Controllo della password
-        let compatibleHash = user.password.replace('$2y$', '$2a$')
+        let compatibleHash = user.password.replace('$2y$', '$2a$') //Cambio il prefisso di cryptazione della password
         const isPasswordCorrect = await bcrypt.compare(password, compatibleHash)
         if (!isPasswordCorrect) {
             return res.status(401).json({error: 'Password errata'})
@@ -57,15 +74,26 @@ const login = async (req, res) => {
             path: '/'
         })
 
-        const redirectUrl =
-            role === 'admin'
-            ? '/BiteLine/Frontend/pages/admins/adminControls/adminPage.php'
-            : '/BiteLine/Frontend/pages/users/Owners/ownersControls/ownerPage.php'
-
+        switch (role){
+            case 'admin':
+                redirectUrl = '/BiteLine/Frontend/pages/admins/adminControls/adminPage.php'
+                break;
+            case 'owner':
+                redirectUrl = '/BiteLine/Frontend/pages/users/Owners/ownerPage.php'
+                idFiled = 'owner'
+                break;
+            case 'customer':
+                redirectUrl = '/BiteLine/Frontend/page/users/Customers/userPage.html'
+                idFiled = 'customer'
+                break;
+            default:
+                res.status(404).json({error: 'Pagina non trovata'})
+        }
         res.json({
             message: `Login effettuato con successo come ${role}`,
             redirectUrl: redirectUrl
         })
+
     }catch (e){
         //Catch degli errori interni del server
         console.error(e)

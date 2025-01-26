@@ -9,7 +9,7 @@
 </head>
 <body>
     <header id="header"></header>
-    <h1>Accedi come amministratore</h1>
+    <h1>Accedi</h1>
     <form id="loginForm" method="post">
         <label for="email">Email</label>
         <input type="email" name="email" id="email" required>
@@ -19,6 +19,7 @@
 
         <label for="role"></label>
         <select name="role" id="role">
+            <option value="customer">Utente</option>
             <option value="admin">Admin</option>
             <option value="owner">Proprietario</option>
         </select>
@@ -28,7 +29,7 @@
     <a href="registerAdmin.html">Non hai un account? Registrati</a>
     <footer id="footer"></footer>
 
-    <script src="../../routes/routes.js"></script>
-    <script src="../../assets/script/linkLogAdmin.js"></script>
+    <script src="../../../routes/routes.js"></script>
+    <script src="../../../assets/script/linkLogin.js"></script>
 </body>
 </html>
