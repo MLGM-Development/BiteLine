@@ -15,7 +15,7 @@ const authJWT = (req, res, next) => {
             req.user = decoded
             next()
         } catch (e){
-            return res.status(403).json({message: "Token non valido"})
+            return res.status(403).json({redirectUrl: '/BiteLine/Frontend/pages/session/login.html', error: "Token non valido"})
         }
     }
 }

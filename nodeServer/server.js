@@ -9,7 +9,10 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost', // Indica l'origine del tuo frontend
+    credentials: true, // Per includere i cookie
+}));
 
 // Rotte
 app.use('/node-api', authRoutes);

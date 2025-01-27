@@ -1,6 +1,6 @@
 const express = require('express')
 const {login} = require('../controllers/authController')
-const {logout} = require('../controllers/logoutController')
+const logout = require('../controllers/logoutController')
 const authJWT = require('../middleware/authMiddleware')
 
 const router = express.Router()
