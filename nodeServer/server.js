@@ -1,12 +1,15 @@
+require('dotenv').config()
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/authRoutes');
+const cors = require('cors')
 
 const app = express();
 
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors())
 
 // Rotte
 app.use('/node-api', authRoutes);

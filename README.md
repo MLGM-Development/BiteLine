@@ -10,7 +10,7 @@ Comando per installare su composer: composer require <nome pacchetto\>
 
 NodeJS File Manager: npm
 
-packets: express mysql2 bcrypt cookie-parser
+packets: express mysql2 bcrypt cookie-parser jsonwebtoken cors
 
 Comando per installare su npm: npm install <nome pacchetto\>
 

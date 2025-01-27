@@ -1,6 +1,10 @@
 const bcrypt = require('bcrypt') //Importo la libreria per il decrypt/crypt della psw
-const crypto = require('crypto') //Importo la libreria per il cookie
+const jwt = require('jsonwebtoken')
+//const crypto = require('crypto') //Importo la libreria per il cookie
 const connectDatabase = require('../config/dbConfig') //Importo la connessione al DB
+require('dotenv').config()
+
+const secretKey = process.env.JWT_SECRET
 
 //Funsione per il login
 const login = async (req, res) => {
@@ -57,8 +61,20 @@ const login = async (req, res) => {
             return res.status(401).json({error: 'Password errata'})
         }
 
+        const token = jwt.sign(
+            { id: user.id, role: role },
+            secretKey,
+            {expiresIn: '744h'}
+        )
+
+        res.cookie('auth_token', token, {
+            httpOnly: true,
+            secure: false,
+            maxAge: 60 * 60 * 24 * 24 * 24
+        })
+
         //Creazione del cookie
-        const sessionId = crypto.randomBytes(32).toString('hex')
+        /*const sessionId = crypto.randomBytes(32).toString('hex')
         const expiry = Math.floor(Date.now() / 1000) + 2592000 //Imposto la scadenza
 
         //Mi connetto al db e updato gli admin con cookie
@@ -72,7 +88,7 @@ const login = async (req, res) => {
             httpOnly: true,
             maxAge: 259000000,
             path: '/'
-        })
+        })*/
 
         switch (role){
             case 'admin':
@@ -83,7 +99,7 @@ const login = async (req, res) => {
                 idFiled = 'owner'
                 break;
             case 'customer':
-                redirectUrl = '/BiteLine/Frontend/page/users/Customers/userPage.html'
+                redirectUrl = '/BiteLine/Frontend/pages/users/Customers/userPage.html'
                 idFiled = 'customer'
                 break;
             default:
@@ -103,3 +119,4 @@ const login = async (req, res) => {
 
 //Esportazione del modulo
 module.exports = {login}
+
