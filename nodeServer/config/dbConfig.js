@@ -3,15 +3,15 @@ require('dotenv').config() //Richiamo la libreria per usare i file .env
 
 //credenziali del database
 const dbConfig = {
-    /*host: process.env.DATABASE_HOSTNAME,
+    host: process.env.DATABASE_HOSTNAME,
     user: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE_NAME,*/
+    database: process.env.DATABASE_NAME,
 
-    host: 'localhost',
+    /*host: 'localhost',
     user: 'root',
     password: 'root',
-    database: 'biteline_db',
+    database: 'biteline_db',*/
 };
 
 //funzione di connessione al database

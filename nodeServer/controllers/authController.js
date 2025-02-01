@@ -61,19 +61,22 @@ const login = async (req, res) => {
             return res.status(401).json({error: 'Password errata'})
         }
 
+        
+        //Creazione del JWT
         const token = jwt.sign(
             { id: user.id, role: role },
             secretKey,
             {expiresIn: '744h'}
         )
 
+        //Creazione del cookie
         res.cookie('auth_token', token, {
             httpOnly: true,
             secure: false,
             maxAge: 60 * 60 * 24 * 24 * 24
         })
 
-        //Creazione del cookie
+        
         /*const sessionId = crypto.randomBytes(32).toString('hex')
         const expiry = Math.floor(Date.now() / 1000) + 2592000 //Imposto la scadenza
 
