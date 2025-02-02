@@ -6,7 +6,7 @@ require('dotenv').config()
 
 const secretKey = process.env.JWT_SECRET
 
-//Funsione per il login
+//Funzione per il login
 const login = async (req, res) => {
     const {email, password, role} = req.body //Prendo i valori degli input del body
 
@@ -21,6 +21,7 @@ const login = async (req, res) => {
         let tableName
         let idFiled
 
+        //Individuazione del ruolo per la query e per i cookie
         switch (role){
             case 'admin':
                 tableName = 'admins'
@@ -38,6 +39,7 @@ const login = async (req, res) => {
                 res.status(404).json({error: 'Ruolo non trovato'})
         }
 
+        //Query retriever dei dati
         const queryRetriever = `
             SELECT ${idFiled}_id AS id, email, password
             FROM ${tableName}
@@ -93,6 +95,7 @@ const login = async (req, res) => {
             path: '/'
         })*/
 
+        //redirect in base al ruolo
         switch (role){
             case 'admin':
                 redirectUrl = '/BiteLine/Frontend/pages/admins/adminControls/adminPage.php'

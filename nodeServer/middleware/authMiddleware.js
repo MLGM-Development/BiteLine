@@ -1,13 +1,18 @@
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken') //Libreria dei cookie
 require('dotenv').config()
+
 const secretKey = process.env.JWT_SECRET
 
 const authJWT = (req, res, next) => {
+
+    //Si prende il token dai cookie dal browser
     const token = req.cookies.auth_token
 
+    
     if(!token) {
+        //Se il token non è stato creato allora da errore
         return res.status(401).json({
-            message: 'Accesso negato, token mancante'
+            message: 'Accesso negato, token mancante' 
         })
 
         try {
