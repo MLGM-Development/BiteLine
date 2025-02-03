@@ -31,9 +31,9 @@ const login = async (req, res) => {
                 tableName = 'owners'
                 idFiled = 'owner'
                 break;
-            case 'customer':
-                tableName = 'customers'
-                idFiled = 'customer'
+            case 'user':
+                tableName = 'users'
+                idFiled = 'user'
                 break;
             default:
                 res.status(404).json({error: 'Ruolo non trovato'})
@@ -102,11 +102,9 @@ const login = async (req, res) => {
                 break;
             case 'owner':
                 redirectUrl = '/BiteLine/Frontend/pages/users/Owners/ownerPage.php'
-                idFiled = 'owner'
                 break;
-            case 'customer':
+            case 'user':
                 redirectUrl = '/BiteLine/Frontend/pages/users/Customers/userPage.html'
-                idFiled = 'customer'
                 break;
             default:
                 res.status(404).json({error: 'Pagina non trovata'})
