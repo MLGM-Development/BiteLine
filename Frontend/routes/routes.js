@@ -24,6 +24,6 @@ function loadComponents(selector, filepath, cssPath = null){
 }
 
 document.addEventListener('DOMContentLoaded', () => { //Quando il documento è pronto
-    loadComponents("#header", "/Frontend/components/Header/header.html", "/Frontend/assets/css/styleComponent/header.css");
-    loadComponents("#footer", "/Frontend/components/Footer/footer.html", "/Frontend/assets/css/styleComponent/footer.css");
+    loadComponents("#header", "/BiteLine/Frontend/components/Header/header.html", "/BiteLine/Frontend/assets/css/styleComponent/header.css");
+    loadComponents("#footer", "/BiteLine/Frontend/components/Footer/footer.html", "/BiteLine/Frontend/assets/css/styleComponent/footer.css");
 });
