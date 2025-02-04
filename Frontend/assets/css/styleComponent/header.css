@@ -1,8 +1,185 @@
 /* Questo viene incorporato alle pagine, nel browser interagirà anche con gli elementi dell'homepage, quindi usate classi e ID */
+:root{
+    --header-bg: white;
+    --header-title: #000;
+    --header-sub-title: #7a7a7a;
+    --header-block-bg: #eae8e8;
+}
 
-header {
-    margin: 0;
-    border: 0;
-    box-sizing: border-box;
-    padding: 0;
+header{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transform: translateY(-100px);
+    transition: .4s ease-in-out;
+    font-family: "Mulish", serif;
+}
+
+.left {
+    display: none;
+}
+
+.responsiveMenu {
+    display: none;
+}
+
+.content{
+    background: var(--header-bg);
+    height: 100px;
+    width: 100%;
+}
+
+.right>nav>ul{
+    display: flex;
+    list-style: none;
+    justify-content: space-between;
+    padding: 0 15px ;
+    align-items: center;
+    height: 100px;
+}
+
+.headerButton{
+    transition: .2s;
+    display: flex;
+    align-items: center;
+    height: 100px;
+    border-top: 2px solid transparent;
+}
+
+.headerButton:hover{
+    border-top: 2px solid var(--header-title);
+}
+
+.headerButton>a{
+    text-decoration: none;
+}
+
+.headerButton>a>h5{
+    color: var(--header-title);
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.headerButton>a>p{
+    color: var(--header-sub-title);
+}
+
+.accordion{
+    background: var(--header-bg);
+    width: 150px;
+    height: 30px;
+    position: relative;
+    clip-path: polygon(0 0, 100% 0, 80% 100%, 20% 100%);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.line{
+    width: 25px;
+    height: 1px;
+    background: black;
+    z-index: 1;
+}
+
+#line1{
+    margin-bottom: 5px;
+}
+
+@media (max-width: 999px) {
+    .accordion{
+        display: none;
+    }
+
+    .right>nav>ul{
+        display: none;
+    }
+
+    .content {
+        background: transparent;
+        height: auto;
+    }
+
+    .responsiveMenu{
+        display: flex;
+        cursor: pointer;
+    }
+
+    header {
+        transform: translateY(0);
+        padding: 10px;
+        height: fit-content;
+        width: calc(100% - 20px); /* Compensa il padding laterale */
+        margin: 0 auto; /* Centra l'header */
+        box-sizing: border-box; /* Importante! */
+    }
+
+    .resButton{
+        display: flex;
+        align-items: center;
+        background: aliceblue;
+        padding: 10px 18px;
+        border-radius: 20px;
+        height: 40px;
+    }
+
+    .resButton>h2{
+        font-size: 18px;
+    }
+
+    .respBlock{
+        position: absolute;
+        padding: 40px 40px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        margin-top: 60px;
+        background: var(--header-block-bg);
+        width: 100%;
+        opacity: 0;
+        transform: translateY(10%);
+        transition: .4s ease-in-out;
+    }
+
+    .respBlock>ul{
+        list-style: none;
+        width: 100%;
+    }
+
+    .respBlock>ul>li{
+        width: 100%;
+    }
+
+    .respBlock>ul>li>a{
+        text-decoration: none;
+        color: var(--header-title);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .respBlock>ul>li>a>h4{
+        text-transform: uppercase;
+        font-size: 30px;
+    }
+
+    #respHeaderLink1,
+    #respHeaderLink2,
+    #respHeaderLink3,
+    #respHeaderLink4 {
+        margin-bottom: 25px;
+    }
+
+    .dot{
+        background: black;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: none;
+    }
 }
