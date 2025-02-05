@@ -1,5 +1,5 @@
 :root{
-    --glow-title-1: rgba(227, 227, 227, 0.2);
+    --glow-title-1: rgb(92, 92, 92);
     --glow-title-2: rgba(202, 202, 204, 0.1);
     --glow-title-3: rgba(175, 172, 172, 0.05);
     --glow-title-4: rgba(222, 222, 227, 0.35);
@@ -26,7 +26,7 @@ section{
 }
 
 .title>h1{
-    color: #939393;
+    color: #306e8b;
     font-size: 12vw;
     text-transform: uppercase;
     transition: .5s ease-in-out;
@@ -65,7 +65,7 @@ section{
 .preTitle>p{
     font-family: "Mulish", serif;
     color: #fff;
-    font-size: 1.6rem;
+    font-size: 1.3rem;
 }
 
 .preTitle>p:nth-child(1){
