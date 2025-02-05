@@ -47,6 +47,10 @@ Una volta fatto ciò basterà andare sulla cartella nodeServer ed effettuare il 
 
     npm init -y
 
+Dopodiché
+
+    npm install
+
 Dopodiché 
 
     node server.js

@@ -1,14 +1,29 @@
 let titleHome = document.getElementById("titleHome");
-let pt1 = document.getElementById("pt1");
-let pt2 = document.getElementById("pt2");
+let preTitle = document.querySelector(".preTitle");
 
 window.onload = function () {
     setTimeout(function() {
-        titleHome.style.fontSize = "20vw";
-        pt1.style.opacity = '1'
-        pt2.style.opacity = '1'
-        pt1.style.transform = 'translateY(0)'
-        pt2.style.opacity = 'translateY(0)'
+        titleHome.style.fontSize = "18vw";
+        preTitle.style.opacity = '1'
+        preTitle.style.transform = 'translateY(0)'
 
     }, 500);
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+    const video = document.querySelector('main video');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                video.play();
+            } else {
+                video.pause();
+            }
+        });
+    }, {
+        threshold: 0.75 // Il video deve essere almeno al 50% visibile
+    });
+
+    observer.observe(video);
+});

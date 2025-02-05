@@ -1,10 +1,35 @@
 /* Questo viene incorporato alle pagine, nel browser interagirà anche con gli elementi dell'homepage, quindi usate classi e ID */
 :root{
-    --header-bg: white;
+    --header-bg: #ededed;
     --header-title: #000;
     --header-sub-title: #7a7a7a;
-    --header-block-bg: #eae8e8;
+    --header-block-bg: #ededed;
+    --resp-header-button-bg-a: #ededed;
+    --resp-header-button-bg: #c6c5c5;
 }
+
+/* Barra di scorrimento principale */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+/* Traccia della scrollbar */
+::-webkit-scrollbar-track {
+    background: #0a0a0a;
+    border-radius: 10px;
+}
+
+/* Thumb della scrollbar */
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #202020, #262626);
+    border-radius: 10px;
+}
+
+/* Thumb al passaggio del mouse */
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #282828, #282828);
+}
+
 
 header{
     position: fixed;
@@ -16,6 +41,7 @@ header{
     transform: translateY(-100px);
     transition: .4s ease-in-out;
     font-family: "Mulish", serif;
+    z-index: 1;
 }
 
 .left {
@@ -122,10 +148,15 @@ header{
     .resButton{
         display: flex;
         align-items: center;
-        background: aliceblue;
+        background: var(--resp-header-button-bg);
         padding: 10px 18px;
         border-radius: 20px;
         height: 40px;
+        transition: .3s;
+    }
+
+    .resButton:hover{
+        background: var(--resp-header-button-bg-a);
     }
 
     .resButton>h2{
@@ -153,6 +184,7 @@ header{
 
     .respBlock>ul>li{
         width: 100%;
+        transition: .3s;
     }
 
     .respBlock>ul>li>a{
@@ -167,6 +199,12 @@ header{
     .respBlock>ul>li>a>h4{
         text-transform: uppercase;
         font-size: 30px;
+    }
+
+    .respBlock>ul>li:hover{
+        background: #b3b3b3;
+        border-radius: 15px;
+        padding: 5px 5px 10px 10px;
     }
 
     #respHeaderLink1,
