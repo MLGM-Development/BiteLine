@@ -1,3 +1,61 @@
 body {
-    background: #b64848;
+    background: #020b12;
+}
+
+.title{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+}
+
+.title>h1{
+    color:#ffffff;
+    font-size: 15vw;
+    text-transform: uppercase;
+    transition: .5s ease-in-out;
+    font-family: "Mulish", serif;
+    text-shadow: 0 0 10px rgba(150, 150, 255, 0.5),
+    0 0 20px rgba(150, 150, 255, 0.4),
+    0 0 30px rgba(150, 150, 255, 0.3);
+    animation: glowing 4s infinite;
+}
+
+@keyframes glowing {
+    0% {
+        text-shadow: 0 0 10px rgba(150, 150, 255, 0.5),
+        0 0 20px rgba(150, 150, 255, 0.4),
+        0 0 30px rgba(150, 150, 255, 0.3);
+    }
+    50% {
+        text-shadow: 0 0 20px rgba(150, 150, 255, 0.7),
+        0 0 30px rgba(150, 150, 255, 0.6),
+        0 0 40px rgba(150, 150, 255, 0.5);
+    }
+    100% {
+        text-shadow: 0 0 10px rgba(150, 150, 255, 0.5),
+        0 0 20px rgba(150, 150, 255, 0.4),
+        0 0 30px rgba(150, 150, 255, 0.3);
+    }
+}
+
+.preTitle{
+    display: flex;
+}
+
+.preTitle>p{
+    transition: .5s ease-in-out;
+    font-family: "Mulish", serif;
+    color: #fff;
+    opacity: 0;
+    transform: translateY(5%);
+}
+
+.preTitle>p:nth-child(1){
+    font-weight: bold;
+}
+
+.preTitle>p:nth-child(2){
+    margin-left: 10px;
 }
