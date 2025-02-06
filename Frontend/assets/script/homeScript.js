@@ -3,7 +3,7 @@ let preTitle = document.querySelector(".preTitle");
 
 window.onload = function () {
     setTimeout(function() {
-        titleHome.style.fontSize = "18vw";
+        titleHome.style.fontSize = "";
         preTitle.style.opacity = '1'
         preTitle.style.transform = 'translateY(0)'
 
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }, {
-        threshold: 0.75 // Il video deve essere almeno al 50% visibile
+        threshold: 0.75 // Il video deve essere almeno al 75% visibile
     });
 
     observer.observe(video);

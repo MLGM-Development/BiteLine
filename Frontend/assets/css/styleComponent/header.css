@@ -6,6 +6,16 @@
     --header-block-bg: #ededed;
     --resp-header-button-bg-a: #ededed;
     --resp-header-button-bg: #c6c5c5;
+
+    --glow-title-1: rgb(92, 92, 92);
+    --glow-title-2: rgba(202, 202, 204, 0.1);
+    --glow-title-3: rgba(175, 172, 172, 0.05);
+    --glow-title-4: rgba(222, 222, 227, 0.35);
+    --glow-title-5: rgba(227, 227, 227, 0.3);
+    --sub-color: #5c6063;
+
+    --norm-dark: #040a0a;
+    --light-border: #0b1314;
 }
 
 /* Barra di scorrimento principale */
