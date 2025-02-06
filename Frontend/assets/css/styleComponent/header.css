@@ -64,6 +64,7 @@ header{
 
 .content{
     background: var(--header-bg);
+    padding: 0 30px;
     height: 100px;
     width: 100%;
 }
@@ -128,6 +129,7 @@ header{
 }
 
 @media (max-width: 999px) {
+
     .accordion{
         display: none;
     }
@@ -139,6 +141,7 @@ header{
     .content {
         background: transparent;
         height: auto;
+        padding: 0;
     }
 
     .responsiveMenu{
