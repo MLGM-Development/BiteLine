@@ -13,6 +13,19 @@ section{
     display: flex;
     align-items: center;
     flex-direction: column;
+    height: 130vh;
+    justify-content: end;
+}
+
+section::before{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, #282828, transparent);
+    z-index: -1;
 }
 
 .title>h1{
@@ -98,6 +111,7 @@ section{
 
 .preTitle>p:nth-child(2){
     margin-left: 20px;
+    color: var(--header-sub-title);
 }
 
 .sponsor,
@@ -111,6 +125,7 @@ section{
 
 .sponsorEl>p{
     margin-bottom: 20px;
+    transition: .3s;
 }
 
 .sponsorEl>p:nth-child(1),
@@ -128,13 +143,15 @@ section{
 main{
     width: 100%;
     height: 100vh;
-    background: black;
+    background: var(--glow-title-2);
     display: flex;
     justify-content: center;
     align-items: center;
 }
-
-video{
-    width: 95%;
-    border-radius: 20px;
+.sponsor>*{
+    font-family: Mulish, serif;
+}
+.sponsorEl>p:hover{
+    color: var(--header-bg);
+    cursor: pointer;
 }
