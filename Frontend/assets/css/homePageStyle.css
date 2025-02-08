@@ -158,6 +158,11 @@ main{
     cursor: pointer;
 }
 
+#mock2,
+#mock3{
+    display: none;
+}
+
 @media (max-width: 1329px) {
     .mockup>img{
         width: 1000px;
