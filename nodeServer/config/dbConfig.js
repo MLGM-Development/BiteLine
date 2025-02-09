@@ -5,7 +5,7 @@ require('dotenv').config() //Richiamo la libreria per usare i file .env
 const dbConfig = {
     host: process.env.DATABASE_HOSTNAME,
     user: process.env.DATABASE_USERNAME,
-    password: "",
+    password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME,
 };
 

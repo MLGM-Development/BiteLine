@@ -1,29 +1,30 @@
 <?php
 $mysqli = require __DIR__ . "/../../../../Backend/Database/connection.php";
+require __DIR__ . '/../../../../Backend/Controllers/Cookies/JWT_Verifier.php';
 
-if(isset($_COOKIE['auth_token'])) {
-    $session_code = $mysqli->real_escape_string($_COOKIE['auth_token']);
+$jwtToken = getJwtToken();
 
-    $verify_query = "SELECT * FROM owners WHERE session_token = ?";
-    $stmt = $mysqli->prepare($verify_query);
-    $stmt->bind_param("s", $session_code);
-    $stmt->execute();
-    $result = $stmt->get_result();
+if ($jwtToken) {
+    // Verify JWT token and extract payload
+    $payload = verifyJwtToken($jwtToken);
 
-    if ($result->num_rows < 1) {
-        header("Location: ../logOwner.html");
-    } else {
-        $owner = $result->fetch_assoc();
+    if (!isset($payload['id'])) {
+        die('User not authenticated');
     }
+
+    if ($payload['role'] !== 'owner'){
+        header('Location: ../../../errors/error-403.html');
+    }
+
+    $ownerId = $payload['id'];
 } else {
-    header("Location: ../logOwner.html");
-    exit();
+    header('Location: ../../../errors/error-500.html');
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $sql = "INSERT INTO restaurants (name, address, email, phone_number, owner) VALUES (?, ?, ?, ?, ?)";
     $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("ssssi", $_POST["resName"], $_POST["address"], $_POST["resMail"], $_POST["resPhone"], $owner["owner_id"]);
+    $stmt->bind_param("ssssi", $_POST["resName"], $_POST["address"], $_POST["resMail"], $_POST["resPhone"], $payload['id']);
     $stmt->execute();
 
     header("Location: ../../users/Owners/ownersControls/ownerPage.php");

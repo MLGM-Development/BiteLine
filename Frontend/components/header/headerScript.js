@@ -54,4 +54,4 @@ function debounce(func, timeout = 100) {
 window.addEventListener('resize', debounce(handleResponsive));
 
 const fileName = window.location.pathname.split('/').pop();
-dotH.style.display = fileName === 'index.html' ? 'block' : 'none';
+dotH.style.display = fileName === 'ownIndexDash.php' ? 'block' : 'none';

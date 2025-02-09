@@ -11,30 +11,6 @@
 
     <script src="../../../assets/script/logout.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const response = await fetch('http://localhost:3000/node-api/protected', {
-                    method: 'GET',
-                    credentials: 'include', // Include i cookie nella richiesta
-                });
 
-                if (!response.ok) {
-                    const data = await response.json();
-                    console.error(data.error);
-                    // Reindirizza al login se il token non è valido o assente
-                    window.location.href = data.redirectUrl || '/BiteLine/Frontend/pages/users/session/login.html';
-                } else {
-                    const data = await response.json();
-                    console.log(data.message); // Messaggio di successo
-                }
-            } catch (error) {
-                console.error('Errore nella verifica del token:', error);
-                window.location.href = '/BiteLine/Frontend/pages/users/session/login.html';
-            }
-        });
-
-
-    </script>
 </body>
 </html>

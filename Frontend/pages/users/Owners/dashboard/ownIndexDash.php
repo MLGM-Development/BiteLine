@@ -1,30 +1,96 @@
+<?php
+$mysqli = require __DIR__ . "/../../../../../Backend/Database/connection.php";
+require __DIR__ . '/../../../../../Backend/Controllers/Cookies/JWT_Verifier.php';
+
+$jwtToken = getJwtToken();
+
+if ($jwtToken) {
+    // Verify JWT token and extract payload
+    $payload = verifyJwtToken($jwtToken);
+
+    if (!isset($payload['id'])) {
+        die('User not authenticated');
+    }
+
+    if ($payload['role'] !== 'owner'){
+        header('Location: ../../../errors/error-403.html');
+    }
+
+    $ownerId = $payload['id'];
+} else {
+    header('Location: ../../../errors/error-500.html');
+}
+
+$ownerId = $payload['id'];
+
+$sql = 'SELECT * FROM restaurants WHERE owner = ?';
+$stmt = $mysqli->prepare($sql);
+$stmt->bind_param('i', $ownerId);
+$stmt->execute();
+
+$result = $stmt->get_result();
+
+if($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $empNumb = "SELECT COUNT(*) FROM employees_history WHERE restaurant_id = ?";
+    $stmtempNumb = $mysqli->prepare($empNumb);
+    $stmtempNumb->bind_param("i", $row["restaurant_id"]);
+    $stmtempNumb->execute();
+    $resultEmp = $stmtempNumb->get_result();
+    $rowEmp = $resultEmp->fetch_assoc();
+
+    $numOrder = "SELECT COUNT(user_id) FROM orders, users WHERE restaurant_id = ? AND customer_id = user_id";
+    $stmtNumOrder = $mysqli->prepare($numOrder);
+    $stmtNumOrder->bind_param("i", $row["restaurant_id"]);
+    $stmtNumOrder->execute();
+    $resultNumOrder = $stmtNumOrder->get_result();
+    $rowNumOrder = $resultNumOrder->fetch_assoc();
+
+    $numClient = "SELECT COUNT(*) FROM orders WHERE restaurant_id = ?";
+    $stmtNumClient = $mysqli->prepare($numClient);
+    $stmtNumClient->bind_param("i", $row["restaurant_id"]);
+    $stmtNumClient->execute();
+    $resultNumClient = $stmtNumClient->get_result();
+    $rowNumClient = $resultNumClient->fetch_assoc();
+
+    $top3product = "SELECT products.product_id, name, COUNT(orderproduct.product_id) as num FROM orderproduct, products WHERE products.product_id = orderproduct.product_id GROUP BY product_id, name ORDER BY num DESC LIMIT 3";
+}else{
+    header('Location: ../../../location/managing/RegRestaurant.php');
+}
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RTL Dashboard - Mazer Admin Dashboard</title>
+    <title>Area amministrazione | BiteLine</title>
     
-    <link rel="stylesheet" href="../Frontend/assets/bootstrap/compiled/css/app.rtl.css">
-    <link rel="stylesheet" href="../Frontend/assets/bootstrap/compiled/css/app-dark.rtl.css">
-    <link rel="shortcut icon" href="../Frontend/assets/bootstrap/compiled/svg/favicon.svg" type="image/x-icon">
+    
+    
+    <link rel="shortcut icon" href="../../../../assets/bootstrap/compiled/svg/favicon.svg" type="image/x-icon">
     <link rel="shortcut icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAiCAYAAADRcLDBAAAEs2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS41LjAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6ZXhpZj0iaHR0cDovL25zLmFkb2JlLmNvbS9leGlmLzEuMC8iCiAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIKICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIKICAgIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIgogICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgZXhpZjpQaXhlbFhEaW1lbnNpb249IjMzIgogICBleGlmOlBpeGVsWURpbWVuc2lvbj0iMzQiCiAgIGV4aWY6Q29sb3JTcGFjZT0iMSIKICAgdGlmZjpJbWFnZVdpZHRoPSIzMyIKICAgdGlmZjpJbWFnZUxlbmd0aD0iMzQiCiAgIHRpZmY6UmVzb2x1dGlvblVuaXQ9IjIiCiAgIHRpZmY6WFJlc29sdXRpb249Ijk2LjAiCiAgIHRpZmY6WVJlc29sdXRpb249Ijk2LjAiCiAgIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiCiAgIHBob3Rvc2hvcDpJQ0NQcm9maWxlPSJzUkdCIElFQzYxOTY2LTIuMSIKICAgeG1wOk1vZGlmeURhdGU9IjIwMjItMDMtMzFUMTA6NTA6MjMrMDI6MDAiCiAgIHhtcDpNZXRhZGF0YURhdGU9IjIwMjItMDMtMzFUMTA6NTA6MjMrMDI6MDAiPgogICA8eG1wTU06SGlzdG9yeT4KICAgIDxyZGY6U2VxPgogICAgIDxyZGY6bGkKICAgICAgc3RFdnQ6YWN0aW9uPSJwcm9kdWNlZCIKICAgICAgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWZmaW5pdHkgRGVzaWduZXIgMS4xMC4xIgogICAgICBzdEV2dDp3aGVuPSIyMDIyLTAzLTMxVDEwOjUwOjIzKzAyOjAwIi8+CiAgICA8L3JkZjpTZXE+CiAgIDwveG1wTU06SGlzdG9yeT4KICA8L3JkZjpEZXNjcmlwdGlvbj4KIDwvcmRmOlJERj4KPC94OnhtcG1ldGE+Cjw/eHBhY2tldCBlbmQ9InIiPz5V57uAAAABgmlDQ1BzUkdCIElFQzYxOTY2LTIuMQAAKJF1kc8rRFEUxz9maORHo1hYKC9hISNGTWwsRn4VFmOUX5uZZ36oeTOv954kW2WrKLHxa8FfwFZZK0WkZClrYoOe87ypmWTO7dzzud97z+nec8ETzaiaWd4NWtYyIiNhZWZ2TvE946WZSjqoj6mmPjE1HKWkfdxR5sSbgFOr9Ll/rXoxYapQVik8oOqGJTwqPL5i6Q5vCzeo6dii8KlwpyEXFL519LjLLw6nXP5y2IhGBsFTJ6ykijhexGra0ITl5bRqmWU1fx/nJTWJ7PSUxBbxJkwijBBGYYwhBgnRQ7/MIQIE6ZIVJfK7f/MnyUmuKrPOKgZLpEhj0SnqslRPSEyKnpCRYdXp/9++msneoFu9JgwVT7b91ga+LfjetO3PQ9v+PgLvI1xkC/m5A+h7F32zoLXug38dzi4LWnwHzjeg8UGPGbFfySvuSSbh9QRqZ6H+Gqrm3Z7l9zm+h+iafNUV7O5Bu5z3L/wAdthn7QIme0YAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAJTSURBVFiF7Zi9axRBGIefEw2IdxFBRQsLWUTBaywSK4ubdSGVIY1Y6HZql8ZKCGIqwX/AYLmCgVQKfiDn7jZeEQMWfsSAHAiKqPiB5mIgELWYOW5vzc3O7niHhT/YZvY37/swM/vOzJbIqVq9uQ04CYwCI8AhYAlYAB4Dc7HnrOSJWcoJcBS4ARzQ2F4BZ2LPmTeNuykHwEWgkQGAet9QfiMZjUSt3hwD7psGTWgs9pwH1hC1enMYeA7sKwDxBqjGnvNdZzKZjqmCAKh+U1kmEwi3IEBbIsugnY5avTkEtIAtFhBrQCX2nLVehqyRqFoCAAwBh3WGLAhbgCRIYYinwLolwLqKUwwi9pxV4KUlxKKKUwxC6ZElRCPLYAJxGfhSEOCz6m8HEXvOB2CyIMSk6m8HoXQTmMkJcA2YNTHm3congOvATo3tE3A29pxbpnFzQSiQPcB55IFmFNgFfEQeahaAGZMpsIJIAZWAHcDX2HN+2cT6r39GxmvC9aPNwH5gO1BOPFuBVWAZue0vA9+A12EgjPadnhCuH1WAE8ivYAQ4ohKaagV4gvxi5oG7YSA2vApsCOH60WngKrA3R9IsvQUuhIGY00K4flQG7gHH/mLytB4C42EgfrQb0mV7us8AAMeBS8mGNMR4nwHamtBB7B4QRNdaS0M8GxDEog7iyoAguvJ0QYSBuAOcAt71Kfl7wA8DcTvZ2KtOlJEr+ByyQtqqhTyHTIeB+ONeqi3brh+VgIN0fohUgWGggizZFTplu12yW8iy/YLOGWMpDMTPXnl+Az9vj2HERYqPAAAAAElFTkSuQmCC" type="image/png">
     
 
 
-  <link rel="stylesheet" href="../Frontend/assets/bootstrap/compiled/css/iconly.css">
+  <link rel="stylesheet" href="../../../../assets/bootstrap/compiled/css/app.css">
+  <link rel="stylesheet" href="../../../../assets/bootstrap/compiled/css/app-dark.css">
+  <link rel="stylesheet" href="../../../../assets/bootstrap/compiled/css/iconly.css">
 </head>
 
 <body>
-    <script src="../Frontend/assets/bootstrap/static/js/initTheme.js"></script>
+    <script src="../../../../assets/bootstrap/static/js/initTheme.js"></script>
+
     <div id="app">
         <div id="sidebar">
             <div class="sidebar-wrapper active">
     <div class="sidebar-header position-relative">
         <div class="d-flex justify-content-between align-items-center">
             <div class="logo">
-                <a href="../Frontend/pages/users/Owners/dashboard/ownIndexDash.php"><img src="../Frontend/assets/bootstrap/compiled/svg/logo.svg" alt="Logo" srcset=""></a>
+                <a href="index.html"><img src="../../../../assets/bootstrap/compiled/svg/logo.svg" alt="Logo" srcset=""></a>
             </div>
             <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
@@ -64,12 +130,65 @@
             <li class="sidebar-title">Menu</li>
             
             <li
-                class="sidebar-item  ">
-                <a href="../Frontend/pages/users/Owners/dashboard/ownIndexDash.php" class='sidebar-link'>
+                class="sidebar-item active ">
+                <a href="index.html" class='sidebar-link'>
                     <i class="bi bi-grid-fill"></i>
                     <span>Dashboard</span>
                 </a>
                 
+
+            </li>
+
+            <li
+                    class="sidebar-item">
+                <a href="table-datatable.php" class='sidebar-link'>
+                    <i class="bi bi-file-earmark-spreadsheet-fill"></i>
+                    <span>Ordini</span>
+                </a>
+
+
+            </li>
+
+            <li
+                    class="sidebar-item  has-sub">
+                <a href="#" class='sidebar-link'>
+                    <i class="bi bi-collection-fill"></i>
+                    <span>Crea Menu</span>
+                </a>
+
+                <ul class="submenu ">
+
+                    <li class="submenu-item  ">
+                        <a href="../../../../../dash/extra-component-avatar.html" class="submenu-link">Menu Tavolo</a>
+
+                    </li>
+
+                    <li class="submenu-item  ">
+                        <a href="../../../../../dash/extra-component-divider.html" class="submenu-link">Asporto/Consegna</a>
+
+                    </li>
+                </ul>
+
+
+            </li>
+
+            <li
+                    class="sidebar-item  ">
+                <a href="application-email.html" class='sidebar-link'>
+                    <i class="bi bi-envelope-fill"></i>
+                    <span>Recensioni</span>
+                </a>
+
+
+            </li>
+
+            <li
+                    class="sidebar-item">
+                <a href="index.html" class='sidebar-link'>
+                    <i class="bi bi-grid-fill"></i>
+                    <span>Promozioni</span>
+                </a>
+
 
             </li>
             
@@ -83,87 +202,87 @@
                 <ul class="submenu ">
                     
                     <li class="submenu-item  ">
-                        <a href="component-accordion.html" class="submenu-link">Accordion</a>
+                        <a href="../../../../../dash/component-accordion.html" class="submenu-link">Accordion</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-alert.html" class="submenu-link">Alert</a>
+                        <a href="../../../../../dash/component-alert.html" class="submenu-link">Alert</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-badge.html" class="submenu-link">Badge</a>
+                        <a href="../../../../../dash/component-badge.html" class="submenu-link">Badge</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-breadcrumb.html" class="submenu-link">Breadcrumb</a>
+                        <a href="../../../../../dash/component-breadcrumb.html" class="submenu-link">Breadcrumb</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-button.html" class="submenu-link">Button</a>
+                        <a href="../../../../../dash/component-button.html" class="submenu-link">Button</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-card.html" class="submenu-link">Card</a>
+                        <a href="../../../../../dash/component-card.html" class="submenu-link">Card</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-carousel.html" class="submenu-link">Carousel</a>
+                        <a href="../../../../../dash/component-carousel.html" class="submenu-link">Carousel</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-collapse.html" class="submenu-link">Collapse</a>
+                        <a href="../../../../../dash/component-collapse.html" class="submenu-link">Collapse</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-dropdown.html" class="submenu-link">Dropdown</a>
+                        <a href="../../../../../dash/component-dropdown.html" class="submenu-link">Dropdown</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-list-group.html" class="submenu-link">List Group</a>
+                        <a href="../../../../../dash/component-list-group.html" class="submenu-link">List Group</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-modal.html" class="submenu-link">Modal</a>
+                        <a href="../../../../../dash/component-modal.html" class="submenu-link">Modal</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-navs.html" class="submenu-link">Navs</a>
+                        <a href="../../../../../dash/component-navs.html" class="submenu-link">Navs</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-pagination.html" class="submenu-link">Pagination</a>
+                        <a href="../../../../../dash/component-pagination.html" class="submenu-link">Pagination</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-progress.html" class="submenu-link">Progress</a>
+                        <a href="../../../../../dash/component-progress.html" class="submenu-link">Progress</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-spinner.html" class="submenu-link">Spinner</a>
+                        <a href="../../../../../dash/component-spinner.html" class="submenu-link">Spinner</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-toasts.html" class="submenu-link">Toasts</a>
+                        <a href="../../../../../dash/component-toasts.html" class="submenu-link">Toasts</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="component-tooltip.html" class="submenu-link">Tooltip</a>
+                        <a href="../../../../../dash/component-tooltip.html" class="submenu-link">Tooltip</a>
                         
                     </li>
                     
@@ -182,32 +301,32 @@
                 <ul class="submenu ">
                     
                     <li class="submenu-item  ">
-                        <a href="extra-component-avatar.html" class="submenu-link">Avatar</a>
+                        <a href="../../../../../dash/extra-component-avatar.html" class="submenu-link">Avatar</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="extra-component-divider.html" class="submenu-link">Divider</a>
+                        <a href="../../../../../dash/extra-component-divider.html" class="submenu-link">Divider</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="extra-component-date-picker.html" class="submenu-link">Date Picker</a>
+                        <a href="../../../../../dash/extra-component-date-picker.html" class="submenu-link">Date Picker</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="extra-component-sweetalert.html" class="submenu-link">Sweet Alert</a>
+                        <a href="../../../../../dash/extra-component-sweetalert.html" class="submenu-link">Sweet Alert</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="extra-component-toastify.html" class="submenu-link">Toastify</a>
+                        <a href="../../../../../dash/extra-component-toastify.html" class="submenu-link">Toastify</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="extra-component-rating.html" class="submenu-link">Rating</a>
+                        <a href="../../../../../dash/extra-component-rating.html" class="submenu-link">Rating</a>
                         
                     </li>
                     
@@ -217,36 +336,36 @@
             </li>
             
             <li
-                class="sidebar-item active has-sub">
+                class="sidebar-item  has-sub">
                 <a href="#" class='sidebar-link'>
                     <i class="bi bi-grid-1x2-fill"></i>
                     <span>Layouts</span>
                 </a>
                 
-                <ul class="submenu active">
+                <ul class="submenu ">
                     
                     <li class="submenu-item  ">
-                        <a href="layout-default.html" class="submenu-link">Default Layout</a>
+                        <a href="../../../../../dash/layout-default.html" class="submenu-link">Default Layout</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="layout-vertical-1-column.html" class="submenu-link">1 Column</a>
+                        <a href="../../../../../dash/layout-vertical-1-column.html" class="submenu-link">1 Column</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="layout-vertical-navbar.html" class="submenu-link">Vertical Navbar</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item active ">
-                        <a href="layout-rtl.html" class="submenu-link">RTL Layout</a>
+                        <a href="../../../../../dash/layout-vertical-navbar.html" class="submenu-link">Vertical Navbar</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="layout-horizontal.html" class="submenu-link">Horizontal Menu</a>
+                        <a href="../../../../../dash/layout-rtl.html" class="submenu-link">RTL Layout</a>
+                        
+                    </li>
+                    
+                    <li class="submenu-item  ">
+                        <a href="../../../../../dash/layout-horizontal.html" class="submenu-link">Horizontal Menu</a>
                         
                     </li>
                     
@@ -267,32 +386,32 @@
                 <ul class="submenu ">
                     
                     <li class="submenu-item  ">
-                        <a href="form-element-input.html" class="submenu-link">Input</a>
+                        <a href="../../../../../dash/form-element-input.html" class="submenu-link">Input</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="form-element-input-group.html" class="submenu-link">Input Group</a>
+                        <a href="../../../../../dash/form-element-input-group.html" class="submenu-link">Input Group</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="form-element-select.html" class="submenu-link">Select</a>
+                        <a href="../../../../../dash/form-element-select.html" class="submenu-link">Select</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="form-element-radio.html" class="submenu-link">Radio</a>
+                        <a href="../../../../../dash/form-element-radio.html" class="submenu-link">Radio</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="form-element-checkbox.html" class="submenu-link">Checkbox</a>
+                        <a href="../../../../../dash/form-element-checkbox.html" class="submenu-link">Checkbox</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="form-element-textarea.html" class="submenu-link">Textarea</a>
+                        <a href="../../../../../dash/form-element-textarea.html" class="submenu-link">Textarea</a>
                         
                     </li>
                     
@@ -303,7 +422,7 @@
             
             <li
                 class="sidebar-item  ">
-                <a href="form-layout.html" class='sidebar-link'>
+                <a href="../../../../../dash/form-layout.html" class='sidebar-link'>
                     <i class="bi bi-file-earmark-medical-fill"></i>
                     <span>Form Layout</span>
                 </a>
@@ -321,7 +440,7 @@
                 <ul class="submenu ">
                     
                     <li class="submenu-item  ">
-                        <a href="form-validation-parsley.html" class="submenu-link">Parsley</a>
+                        <a href="../../../../../dash/form-validation-parsley.html" class="submenu-link">Parsley</a>
                         
                     </li>
                     
@@ -340,22 +459,22 @@
                 <ul class="submenu ">
                     
                     <li class="submenu-item  ">
-                        <a href="form-editor-quill.html" class="submenu-link">Quill</a>
+                        <a href="../../../../../dash/form-editor-quill.html" class="submenu-link">Quill</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="form-editor-ckeditor.html" class="submenu-link">CKEditor</a>
+                        <a href="../../../../../dash/form-editor-ckeditor.html" class="submenu-link">CKEditor</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="form-editor-summernote.html" class="submenu-link">Summernote</a>
+                        <a href="../../../../../dash/form-editor-summernote.html" class="submenu-link">Summernote</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="form-editor-tinymce.html" class="submenu-link">TinyMCE</a>
+                        <a href="../../../../../dash/form-editor-tinymce.html" class="submenu-link">TinyMCE</a>
                         
                     </li>
                     
@@ -366,7 +485,7 @@
             
             <li
                 class="sidebar-item  ">
-                <a href="table.html" class='sidebar-link'>
+                <a href="../../../../../dash/table.html" class='sidebar-link'>
                     <i class="bi bi-grid-1x2-fill"></i>
                     <span>Table</span>
                 </a>
@@ -384,12 +503,12 @@
                 <ul class="submenu ">
                     
                     <li class="submenu-item  ">
-                        <a href="../Frontend/pages/users/Owners/dashboard/table-datatable.php" class="submenu-link">Datatable</a>
+                        <a href="table-datatable.php" class="submenu-link">Datatable</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="table-datatable-jquery.html" class="submenu-link">Datatable (jQuery)</a>
+                        <a href="../../../../../dash/table-datatable-jquery.html" class="submenu-link">Datatable (jQuery)</a>
                         
                     </li>
                     
@@ -410,17 +529,17 @@
                 <ul class="submenu ">
                     
                     <li class="submenu-item  ">
-                        <a href="ui-widgets-chatbox.html" class="submenu-link">Chatbox</a>
+                        <a href="../../../../../dash/ui-widgets-chatbox.html" class="submenu-link">Chatbox</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="ui-widgets-pricing.html" class="submenu-link">Pricing</a>
+                        <a href="../../../../../dash/ui-widgets-pricing.html" class="submenu-link">Pricing</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="ui-widgets-todolist.html" class="submenu-link">To-do List</a>
+                        <a href="../../../../../dash/ui-widgets-todolist.html" class="submenu-link">To-do List</a>
                         
                     </li>
                     
@@ -439,17 +558,17 @@
                 <ul class="submenu ">
                     
                     <li class="submenu-item  ">
-                        <a href="ui-icons-bootstrap-icons.html" class="submenu-link">Bootstrap Icons </a>
+                        <a href="../../../../../dash/ui-icons-bootstrap-icons.html" class="submenu-link">Bootstrap Icons </a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="ui-icons-fontawesome.html" class="submenu-link">Fontawesome</a>
+                        <a href="../../../../../dash/ui-icons-fontawesome.html" class="submenu-link">Fontawesome</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="ui-icons-dripicons.html" class="submenu-link">Dripicons</a>
+                        <a href="../../../../../dash/ui-icons-dripicons.html" class="submenu-link">Dripicons</a>
                         
                     </li>
                     
@@ -468,12 +587,12 @@
                 <ul class="submenu ">
                     
                     <li class="submenu-item  ">
-                        <a href="ui-chart-chartjs.html" class="submenu-link">ChartJS</a>
+                        <a href="../../../../../dash/ui-chart-chartjs.html" class="submenu-link">ChartJS</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="ui-chart-apexcharts.html" class="submenu-link">Apexcharts</a>
+                        <a href="../../../../../dash/ui-chart-apexcharts.html" class="submenu-link">Apexcharts</a>
                         
                     </li>
                     
@@ -484,7 +603,7 @@
             
             <li
                 class="sidebar-item  ">
-                <a href="ui-file-uploader.html" class='sidebar-link'>
+                <a href="../../../../../dash/ui-file-uploader.html" class='sidebar-link'>
                     <i class="bi bi-cloud-arrow-up-fill"></i>
                     <span>File Uploader</span>
                 </a>
@@ -502,12 +621,12 @@
                 <ul class="submenu ">
                     
                     <li class="submenu-item  ">
-                        <a href="ui-map-google-map.html" class="submenu-link">Google Map</a>
+                        <a href="../../../../../dash/ui-map-google-map.html" class="submenu-link">Google Map</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="ui-map-jsvectormap.html" class="submenu-link">JS Vector Map</a>
+                        <a href="../../../../../dash/ui-map-jsvectormap.html" class="submenu-link">JS Vector Map</a>
                         
                     </li>
                     
@@ -532,7 +651,7 @@
 
                             
                             <li class="submenu-item ">
-                                <a href="ui-multi-level-menu.html" class="submenu-link">Second Level</a>
+                                <a href="../../../../../dash/ui-multi-level-menu.html" class="submenu-link">Second Level</a>
                             </li>
                             
                             <li class="submenu-item ">
@@ -568,7 +687,7 @@
             
             <li
                 class="sidebar-item  ">
-                <a href="../Frontend/pages/users/Owners/dashboard/application-email.html" class='sidebar-link'>
+                <a href="application-email.html" class='sidebar-link'>
                     <i class="bi bi-envelope-fill"></i>
                     <span>Email Application</span>
                 </a>
@@ -578,7 +697,7 @@
             
             <li
                 class="sidebar-item  ">
-                <a href="application-chat.html" class='sidebar-link'>
+                <a href="../../../../../dash/application-chat.html" class='sidebar-link'>
                     <i class="bi bi-chat-dots-fill"></i>
                     <span>Chat Application</span>
                 </a>
@@ -588,7 +707,7 @@
             
             <li
                 class="sidebar-item  ">
-                <a href="application-gallery.html" class='sidebar-link'>
+                <a href="../../../../../dash/application-gallery.html" class='sidebar-link'>
                     <i class="bi bi-image-fill"></i>
                     <span>Photo Gallery</span>
                 </a>
@@ -598,7 +717,7 @@
             
             <li
                 class="sidebar-item  ">
-                <a href="application-checkout.html" class='sidebar-link'>
+                <a href="../../../../../dash/application-checkout.html" class='sidebar-link'>
                     <i class="bi bi-basket-fill"></i>
                     <span>Checkout Page</span>
                 </a>
@@ -616,17 +735,17 @@
                 <ul class="submenu ">
                     
                     <li class="submenu-item  ">
-                        <a href="auth-login.html" class="submenu-link">Login</a>
+                        <a href="../../../../../dash/auth-login.html" class="submenu-link">Login</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="auth-register.html" class="submenu-link">Register</a>
+                        <a href="../../../../../dash/auth-register.html" class="submenu-link">Register</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="auth-forgot-password.html" class="submenu-link">Forgot Password</a>
+                        <a href="../../../../../dash/auth-forgot-password.html" class="submenu-link">Forgot Password</a>
                         
                     </li>
                     
@@ -645,17 +764,17 @@
                 <ul class="submenu ">
                     
                     <li class="submenu-item  ">
-                        <a href="../Frontend/pages/errors/error-403.html" class="submenu-link">403</a>
+                        <a href="../../../errors/error-403.html" class="submenu-link">403</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="../Frontend/pages/errors/error-404.html" class="submenu-link">404</a>
+                        <a href="../../../errors/error-404.html" class="submenu-link">404</a>
                         
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="../Frontend/pages/errors/error-500.html" class="submenu-link">500</a>
+                        <a href="../../../errors/error-500.html" class="submenu-link">500</a>
                         
                     </li>
                     
@@ -708,7 +827,7 @@
             </header>
             
 <div class="page-heading">
-    <h3>Profile Statistics</h3>
+    <h3>Homepage</h3>
 </div> 
 <div class="page-content"> 
     <section class="row">
@@ -724,8 +843,10 @@
                                     </div>
                                 </div>
                                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                    <h6 class="text-muted font-semibold">Profile Views</h6>
-                                    <h6 class="font-extrabold mb-0">112.000</h6>
+                                    <h6 class="text-muted font-semibold">Dipendenti</h6>
+                                    <h6 class="font-extrabold mb-0">
+                                        <?php echo $rowEmp["COUNT(*)"] ?>
+                                    </h6>
                                 </div>
                             </div> 
                         </div>
@@ -741,7 +862,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                    <h6 class="text-muted font-semibold">Followers</h6>
+                                    <h6 class="text-muted font-semibold">Sedi</h6>
                                     <h6 class="font-extrabold mb-0">183.000</h6>
                                 </div>
                             </div>
@@ -758,8 +879,10 @@
                                     </div>
                                 </div>
                                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                    <h6 class="text-muted font-semibold">Following</h6>
-                                    <h6 class="font-extrabold mb-0">80.000</h6>
+                                    <h6 class="text-muted font-semibold">Clienti</h6>
+                                    <h6 class="font-extrabold mb-0">
+                                        <?php echo $rowNumOrder["COUNT(user_id)"] ?>
+                                    </h6>
                                 </div>
                             </div>
                         </div>
@@ -775,8 +898,10 @@
                                     </div>
                                 </div>
                                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                    <h6 class="text-muted font-semibold">Saved Post</h6>
-                                    <h6 class="font-extrabold mb-0">112</h6>
+                                    <h6 class="text-muted font-semibold">Ordini</h6>
+                                    <h6 class="font-extrabold mb-0">
+                                        <?php echo $rowNumClient["COUNT(*)"] ?>
+                                    </h6>
                                 </div>
                             </div>
                         </div>
@@ -787,7 +912,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Profile Visit</h4>
+                            <h4>Statistiche numero ordini</h4>
                         </div>
                         <div class="card-body">
                             <div id="chart-profile-visit"></div>
@@ -799,7 +924,7 @@
                 <div class="col-12 col-xl-4">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Profile Visit</h4>
+                            <h4>Statistiche prodotti</h4>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -814,7 +939,11 @@
                                     </div>
                                 </div>
                                 <div class="col-5">
-                                    <h5 class="mb-0 text-end">862</h5>
+                                    <h5 class="mb-0 text-end">
+                                        <?php
+
+                                        ?>
+                                    </h5>
                                 </div>
                                 <div class="col-12">
                                     <div id="chart-europe"></div>
@@ -862,15 +991,15 @@
                 <div class="col-12 col-xl-8">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Latest Comments</h4>
+                            <h4>Ultime Recensioni</h4>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-hover table-lg">
                                     <thead>
                                         <tr>
-                                            <th>Name</th>
-                                            <th>Comment</th>
+                                            <th>Nome</th>
+                                            <th>Commento</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -878,7 +1007,7 @@
                                             <td class="col-3">
                                                 <div class="d-flex align-items-center">
                                                     <div class="avatar avatar-md">
-                                                        <img src="../Frontend/assets/bootstrap/compiled/jpg/5.jpg">
+                                                        <img src="../../../../assets/bootstrap/compiled/jpg/5.jpg">
                                                     </div>
                                                     <p class="font-bold ms-3 mb-0">Si Cantik</p>
                                                 </div>
@@ -891,7 +1020,7 @@
                                             <td class="col-3">
                                                 <div class="d-flex align-items-center">
                                                     <div class="avatar avatar-md">
-                                                        <img src="../Frontend/assets/bootstrap/compiled/jpg/2.jpg">
+                                                        <img src="../../../../assets/bootstrap/compiled/jpg/2.jpg">
                                                     </div>
                                                     <p class="font-bold ms-3 mb-0">Si Ganteng</p>
                                                 </div>
@@ -914,7 +1043,7 @@
                 <div class="card-body py-4 px-4">
                     <div class="d-flex align-items-center">
                         <div class="avatar avatar-xl">
-                            <img src="../Frontend/assets/bootstrap/compiled/jpg/1.jpg" alt="Face 1">
+                            <img src="../../../../assets/bootstrap/compiled/jpg/1.jpg" alt="Face 1">
                         </div>
                         <div class="ms-3 name">
                             <h5 class="font-bold">John Duck</h5>
@@ -925,12 +1054,12 @@
             </div>
             <div class="card">
                 <div class="card-header">
-                    <h4>Recent Messages</h4>
+                    <h4>Comande in sospeso</h4>
                 </div>
                 <div class="card-content pb-4">
                     <div class="recent-message d-flex px-4 py-3">
                         <div class="avatar avatar-lg">
-                            <img src="../Frontend/assets/bootstrap/compiled/jpg/4.jpg">
+                            <img src="../../../../assets/bootstrap/compiled/jpg/4.jpg">
                         </div>
                         <div class="name ms-4">
                             <h5 class="mb-1">Hank Schrader</h5>
@@ -939,7 +1068,7 @@
                     </div>
                     <div class="recent-message d-flex px-4 py-3">
                         <div class="avatar avatar-lg">
-                            <img src="../Frontend/assets/bootstrap/compiled/jpg/5.jpg">
+                            <img src="../../../../assets/bootstrap/compiled/jpg/5.jpg">
                         </div>
                         <div class="name ms-4">
                             <h5 class="mb-1">Dean Winchester</h5>
@@ -948,7 +1077,7 @@
                     </div>
                     <div class="recent-message d-flex px-4 py-3">
                         <div class="avatar avatar-lg">
-                            <img src="../Frontend/assets/bootstrap/compiled/jpg/1.jpg">
+                            <img src="../../../../assets/bootstrap/compiled/jpg/1.jpg">
                         </div>
                         <div class="name ms-4">
                             <h5 class="mb-1">John Dodol</h5>
@@ -956,13 +1085,13 @@
                         </div>
                     </div>
                     <div class="px-4">
-                        <button class='btn btn-block btn-xl btn-outline-primary font-bold mt-3'>Start Conversation</button>
+                        <button class='btn btn-block btn-xl btn-outline-primary font-bold mt-3'>Vai agli ordini</button>
                     </div>
                 </div>
             </div> 
             <div class="card">
                 <div class="card-header">
-                    <h4>Visitors Profile</h4>
+                    <h4>Comande</h4>
                 </div>
                 <div class="card-body">
                     <div id="chart-visitors-profile"></div>
@@ -975,27 +1104,23 @@
             <footer>
     <div class="footer clearfix mb-0 text-muted">
         <div class="float-start">
-            <p>2023 &copy; Mazer</p>
-        </div>
-        <div class="float-end">
-            <p>Crafted with <span class="text-danger"><i class="bi bi-heart-fill icon-mid"></i></span>
-                by <a href="https://saugi.me">Saugi</a></p>
+            <p>2025 &copy; BiteLine</p>
         </div>
     </div>
 </footer>
         </div>
     </div>
-    <script src="../Frontend/assets/bootstrap/static/js/components/dark.js"></script>
-    <script src="../Frontend/assets/bootstrap/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="../../../../assets/bootstrap/static/js/components/dark.js"></script>
+    <script src="../../../../assets/bootstrap/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     
     
-    <script src="../Frontend/assets/bootstrap/compiled/js/app.js"></script>
+    <script src="../../../../assets/bootstrap/compiled/js/app.js"></script>
     
 
     
 <!-- Need: Apexcharts -->
-<script src="../Frontend/assets/bootstrap/extensions/apexcharts/apexcharts.min.js"></script>
-<script src="../Frontend/assets/bootstrap/static/js/pages/dashboard.js"></script>
+<script src="../../../../assets/bootstrap/extensions/apexcharts/apexcharts.min.js"></script>
+<script src="../../../../assets/bootstrap/static/js/pages/dashboard.js"></script>
 
 </body>
 
