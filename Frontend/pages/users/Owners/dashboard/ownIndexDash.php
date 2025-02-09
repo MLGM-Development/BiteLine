@@ -23,6 +23,13 @@ if ($jwtToken) {
 
 $ownerId = $payload['id'];
 
+$identity = 'SELECT * FROM owners WHERE owner_id = ?';
+$stmtIdentity = $mysqli->prepare($identity);
+$stmtIdentity->bind_param('i', $ownerId);
+$stmtIdentity->execute();
+$identityResult = $stmtIdentity->get_result();
+$identityRow = $identityResult->fetch_assoc();
+
 $sql = 'SELECT * FROM restaurants WHERE owner = ?';
 $stmt = $mysqli->prepare($sql);
 $stmt->bind_param('i', $ownerId);
@@ -54,6 +61,16 @@ if($result->num_rows > 0) {
     $rowNumClient = $resultNumClient->fetch_assoc();
 
     $top3product = "SELECT products.product_id, name, COUNT(orderproduct.product_id) as num FROM orderproduct, products WHERE products.product_id = orderproduct.product_id GROUP BY product_id, name ORDER BY num DESC LIMIT 3";
+    $stmtTop3product = $mysqli->prepare($top3product);
+    $stmtTop3product->execute();
+    $resultTop3product = $stmtTop3product->get_result();
+    $rowTop3product = $resultTop3product->fetch_assoc();
+
+    $topProduct = [];
+
+    while($rowTop3product = $resultTop3product->fetch_assoc()){
+        $topProduct[] = $rowTop3product;
+    }
 }else{
     header('Location: ../../../location/managing/RegRestaurant.php');
 }
@@ -90,7 +107,7 @@ if($result->num_rows > 0) {
     <div class="sidebar-header position-relative">
         <div class="d-flex justify-content-between align-items-center">
             <div class="logo">
-                <a href="index.html"><img src="../../../../assets/bootstrap/compiled/svg/logo.svg" alt="Logo" srcset=""></a>
+                <a href="ownIndexDash.php"><img src="../../../../assets/bootstrap/compiled/svg/logo.svg" alt="Logo" srcset=""></a>
             </div>
             <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
@@ -131,7 +148,7 @@ if($result->num_rows > 0) {
             
             <li
                 class="sidebar-item active ">
-                <a href="index.html" class='sidebar-link'>
+                <a href="ownIndexDash.php" class='sidebar-link'>
                     <i class="bi bi-grid-fill"></i>
                     <span>Dashboard</span>
                 </a>
@@ -184,7 +201,7 @@ if($result->num_rows > 0) {
 
             <li
                     class="sidebar-item">
-                <a href="index.html" class='sidebar-link'>
+                <a href="ownIndexDash.php" class='sidebar-link'>
                     <i class="bi bi-grid-fill"></i>
                     <span>Promozioni</span>
                 </a>
@@ -961,7 +978,11 @@ if($result->num_rows > 0) {
                                     </div>
                                 </div>
                                 <div class="col-5">
-                                    <h5 class="mb-0 text-end">375</h5>
+                                    <h5 class="mb-0 text-end">
+                                        <?php
+
+                                        ?>
+                                    </h5>
                                 </div>
                                 <div class="col-12">
                                     <div id="chart-america"></div>
@@ -979,7 +1000,11 @@ if($result->num_rows > 0) {
                                     </div>
                                 </div>
                                 <div class="col-5">
-                                    <h5 class="mb-0 text-end">1025</h5>
+                                    <h5 class="mb-0 text-end">
+                                        <?php
+
+                                        ?>
+                                    </h5>
                                 </div>
                                 <div class="col-12">
                                     <div id="chart-indonesia"></div>
@@ -1007,7 +1032,7 @@ if($result->num_rows > 0) {
                                             <td class="col-3">
                                                 <div class="d-flex align-items-center">
                                                     <div class="avatar avatar-md">
-                                                        <img src="../../../../assets/bootstrap/compiled/jpg/5.jpg">
+                                                        <img src="../../../../assets/bootstrap/compiled/jpg/5.jpg" alt="propic">
                                                     </div>
                                                     <p class="font-bold ms-3 mb-0">Si Cantik</p>
                                                 </div>
@@ -1020,7 +1045,7 @@ if($result->num_rows > 0) {
                                             <td class="col-3">
                                                 <div class="d-flex align-items-center">
                                                     <div class="avatar avatar-md">
-                                                        <img src="../../../../assets/bootstrap/compiled/jpg/2.jpg">
+                                                        <img src="../../../../assets/bootstrap/compiled/jpg/2.jpg" alt="propic">
                                                     </div>
                                                     <p class="font-bold ms-3 mb-0">Si Ganteng</p>
                                                 </div>
@@ -1046,8 +1071,12 @@ if($result->num_rows > 0) {
                             <img src="../../../../assets/bootstrap/compiled/jpg/1.jpg" alt="Face 1">
                         </div>
                         <div class="ms-3 name">
-                            <h5 class="font-bold">John Duck</h5>
-                            <h6 class="text-muted mb-0">@johnducky</h6>
+                            <h5 class="font-bold">
+                                <?php echo $identityRow["name"] . " " . $identityRow["l_name"]?>
+                            </h5>
+                            <h6 class="text-muted mb-0" style="text-transform: lowercase">
+                                <?php echo "@" . $identityRow["name"] . $identityRow["l_name"]?>
+                            </h6>
                         </div>
                     </div>
                 </div>
@@ -1059,7 +1088,7 @@ if($result->num_rows > 0) {
                 <div class="card-content pb-4">
                     <div class="recent-message d-flex px-4 py-3">
                         <div class="avatar avatar-lg">
-                            <img src="../../../../assets/bootstrap/compiled/jpg/4.jpg">
+                            <img src="../../../../assets/bootstrap/compiled/jpg/4.jpg" alt="propic">
                         </div>
                         <div class="name ms-4">
                             <h5 class="mb-1">Hank Schrader</h5>
@@ -1068,7 +1097,7 @@ if($result->num_rows > 0) {
                     </div>
                     <div class="recent-message d-flex px-4 py-3">
                         <div class="avatar avatar-lg">
-                            <img src="../../../../assets/bootstrap/compiled/jpg/5.jpg">
+                            <img src="../../../../assets/bootstrap/compiled/jpg/5.jpg" alt="propic">
                         </div>
                         <div class="name ms-4">
                             <h5 class="mb-1">Dean Winchester</h5>
@@ -1077,7 +1106,7 @@ if($result->num_rows > 0) {
                     </div>
                     <div class="recent-message d-flex px-4 py-3">
                         <div class="avatar avatar-lg">
-                            <img src="../../../../assets/bootstrap/compiled/jpg/1.jpg">
+                            <img src="../../../../assets/bootstrap/compiled/jpg/1.jpg" alt="propic">
                         </div>
                         <div class="name ms-4">
                             <h5 class="mb-1">John Dodol</h5>
