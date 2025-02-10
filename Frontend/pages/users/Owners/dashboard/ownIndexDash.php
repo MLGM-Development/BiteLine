@@ -176,7 +176,7 @@ if($result->num_rows > 0) {
                 <ul class="submenu ">
 
                     <li class="submenu-item  ">
-                        <a href="../../../../../dash/extra-component-avatar.html" class="submenu-link">Menu Tavolo</a>
+                        <a href="table-menu-creator.php" class="submenu-link">Menu Tavolo</a>
 
                     </li>
 

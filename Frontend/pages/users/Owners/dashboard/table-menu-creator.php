@@ -1,3 +1,47 @@
+<?php
+$mysqli = require __DIR__ . "/../../../../../Backend/Database/connection.php";
+require __DIR__ . '/../../../../../Backend/Controllers/Cookies/JWT_Verifier.php';
+
+$sql = "SELECT name, description, price 
+            FROM products";
+
+$result = $mysqli->query($sql);
+
+$jwtToken = getJwtToken();
+
+if ($jwtToken) {
+    // Verify JWT token and extract payload
+    $payload = verifyJwtToken($jwtToken);
+
+    if (!isset($payload['id'])) {
+        die('User not authenticated');
+    }
+
+    if ($payload['role'] !== 'owner'){
+        header('Location: ../../../errors/error-403.html');
+    }
+
+    $ownerId = $payload['id'];
+} else {
+    header('Location: ../../../errors/error-500.html');
+}
+
+$restaurantRetriever = "SELECT * FROM restaurants WHERE owner = ?";
+$stmt = $mysqli->prepare($restaurantRetriever);
+$stmt->bind_param("i", $ownerId);
+$stmt->execute();
+$restResult = $stmt->get_result();
+$restRow = $restResult->fetch_assoc();
+
+$menuRetriever = "SELECT * FROM menus WHERE restaurant_id = ?";
+$stmt = $mysqli->prepare($menuRetriever);
+$stmt->bind_param("i", $restRow["restaurant_id"]);
+$stmt->execute();
+
+$stmtResult = $stmt->get_result();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -788,51 +832,100 @@
             <div class="card-content">
                 <div class="card-body">
                     <form class="form form-vertical" method="post">
-                        <div class="form-body">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label for="first-name-vertical">Nome piatto</label>
-                                        <input type="text" id="first-name-vertical" class="form-control"
-                                               name="fname" placeholder="First Name">
+                        <?php
+                            if ($stmtResult && $stmtResult->num_rows <= 0) {
+                                $available = 1;
+                                $menuType = "tavolo";
+                                $menuCreator = "INSERT INTO menus (restaurant_id, name, is_available) VALUES (?, ?, ?)";
+                                $stmt = $mysqli->prepare($menuCreator);
+                                $stmt->bind_param("isi", $restRow["restaurant_id"], $menuType, $available);
+                                $stmt->execute();
+
+                                header("Location: " . $_SERVER['PHP_SELF']);
+                            } else {
+                                $stmtRow = $stmtResult->fetch_assoc();
+                                echo "
+                                    <div class=\"form-body\">
+                            <div class=\"row\">
+                                <div class=\"col-12\">
+                                    <div class=\"form-group\">
+                                        <label for=\"first-name-vertical\">Nome piatto</label>
+                                        <input type=\"text\" id=\"first-name-vertical\" class=\"form-control\"
+                                               name=\"fname\" placeholder=\"First Name\">
                                     </div>
                                 </div>
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label for="email-id-vertical">Breve descrizione</label>
-                                        <input type="text" id="email-id-vertical" class="form-control"
-                                               name="email-id" placeholder="Email">
+                                <div class=\"col-12\">
+                                    <div class=\"form-group\">
+                                        <label for=\"email-id-vertical\">Breve descrizione</label>
+                                        <input type=\"text\" id=\"email-id-vertical\" class=\"form-control\"
+                                               name=\"email-id\" placeholder=\"Email\">
                                     </div>
                                 </div>
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label for="contact-info-vertical">Prezzo</label>
-                                        <input type="number" id="contact-info-vertical" class="form-control"
-                                               name="contact" placeholder="Mobile">
+                                <div class=\"col-12\">
+                                    <div class=\"form-group\">
+                                        <label for=\"contact-info-vertical\">Prezzo</label>
+                                        <input type=\"number\" id=\"contact-info-vertical\" class=\"form-control\"
+                                               name=\"contact\" placeholder=\"Mobile\">
                                     </div>
                                 </div>
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label for="dd-input">Categoria</label>
-                                        <input list="plateCategory" id="dd-input" name="dd-input" class="form-control"
-                                               placeholder="Select Plate Category">
-                                        <datalist id="plateCategory">
-                                            <option value="123456">
-                                            <option value="qwerty">
-                                            <option value="admin">
+                                <div class=\"col-12\">
+                                    <div class=\"form-group\">
+                                        <label for=\"dd-input\">Categoria</label>
+                                        <input list=\"plateCategory\" id=\"dd-input\" name=\"dd-input\" class=\"form-control\"
+                                               placeholder=\"Select Plate Category\">
+                                        <datalist id=\"plateCategory\">
+                                            <option value=\"123456\">
+                                            <option value=\"qwerty\">
+                                            <option value=\"admin\">
                                         </datalist>
                                     </div>
                                 </div>
-                                <div class="col-12 d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-primary me-1 mb-1">Invia</button>
-                                    <button type="reset"
-                                            class="btn btn-light-secondary me-1 mb-1">Reset</button>
+                                <div class=\"col-12 d-flex justify-content-end\">
+                                    <button type=\"submit\" class=\"btn btn-primary me-1 mb-1\">Invia</button>
+                                    <button type=\"reset\"
+                                            class=\"btn btn-light-secondary me-1 mb-1\">Reset</button>
                                 </div>
                             </div>
                         </div>
+                                ";
+                            }
+                        ?>
+
                     </form>
                 </div>
             </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped" id="table1">
+                <thead>
+                <tr>
+                    <th>Numero Ordine</th>
+                    <th>Cliente</th>
+                    <th>Data</th>
+                    <th>Ora</th>
+                    <th>Stato</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                if($result->num_rows > 0) {
+                while($row = $result->fetch_assoc()) {
+                echo "<tr>";
+                    echo "<td>" . $row["order_id"] . "</td>";
+                    echo "<td>" . $row["name"] . $row["l_name"] ."</td>";
+                    echo "<td>" . $row["date"] . "</td>";
+                    echo "<td>" . $row["time"] . "</td>";
+                    echo "<td>" . $row["status"] . "</td>";
+                    echo "</tr>";
+                }
+                } else {
+                echo "<tr>";
+                    echo "<td colspan='5'>Non hai alcun prodotto nel tuo menu</td>";
+                    echo "</tr>";
+                }
+                ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
