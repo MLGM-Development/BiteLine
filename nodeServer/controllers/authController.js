@@ -101,7 +101,7 @@ const login = async (req, res) => {
                 redirectUrl = '/BiteLine/Frontend/pages/admins/adminControls/adminPage.php'
                 break;
             case 'owner':
-                redirectUrl = '/BiteLine/Frontend/pages/users/Owners/ownerPage.php'
+                redirectUrl = '/BiteLine/Frontend/pages/users/Owners/dashboard/ownIndexDash.php'
                 break;
             case 'user':
                 redirectUrl = '/BiteLine/Frontend/pages/users/Customers/userPage.html'
