@@ -40,6 +40,9 @@ $stmt->execute();
 
 $stmtResult = $stmt->get_result();
 
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -831,7 +834,7 @@ $stmtResult = $stmt->get_result();
             </div>
             <div class="card-content">
                 <div class="card-body">
-                    <form class="form form-vertical" method="post">
+                    <form class="form form-vertical" method="post" action="../../../../../Backend/dbInserter/tableMenu.php">
                         <?php
                             if ($stmtResult && $stmtResult->num_rows <= 0) {
                                 $available = 1;
@@ -851,32 +854,37 @@ $stmtResult = $stmt->get_result();
                                     <div class=\"form-group\">
                                         <label for=\"first-name-vertical\">Nome piatto</label>
                                         <input type=\"text\" id=\"first-name-vertical\" class=\"form-control\"
-                                               name=\"fname\" placeholder=\"First Name\">
+                                               name=\"nplate\" placeholder=\"Bistecca di ...\" required>
+                                       <input type=\"hidden\" value='" . $stmtRow["menu_id"] . "' name=\"menu_id\">
                                     </div>
                                 </div>
                                 <div class=\"col-12\">
                                     <div class=\"form-group\">
                                         <label for=\"email-id-vertical\">Breve descrizione</label>
                                         <input type=\"text\" id=\"email-id-vertical\" class=\"form-control\"
-                                               name=\"email-id\" placeholder=\"Email\">
+                                               name=\"dplate\" placeholder=\"Bistecca di ottima carne di ...\" required>
                                     </div>
                                 </div>
                                 <div class=\"col-12\">
                                     <div class=\"form-group\">
                                         <label for=\"contact-info-vertical\">Prezzo</label>
                                         <input type=\"number\" id=\"contact-info-vertical\" class=\"form-control\"
-                                               name=\"contact\" placeholder=\"Mobile\">
+                                               name=\"price\" placeholder=\"36,99\" required>
                                     </div>
                                 </div>
                                 <div class=\"col-12\">
                                     <div class=\"form-group\">
                                         <label for=\"dd-input\">Categoria</label>
                                         <input list=\"plateCategory\" id=\"dd-input\" name=\"dd-input\" class=\"form-control\"
-                                               placeholder=\"Select Plate Category\">
+                                               placeholder=\"Categoria del piatto\" required>
                                         <datalist id=\"plateCategory\">
-                                            <option value=\"123456\">
-                                            <option value=\"qwerty\">
-                                            <option value=\"admin\">
+                                            <option value=\"Antipasti\">
+                                            <option value=\"Primi piatti\">
+                                            <option value=\"Secondi piatti\">
+                                            <option value=\"Pizze\">
+                                            <option value=\"Contorni\">
+                                            <option value=\"Dolci\">
+                                            <option value=\"Bevande\">
                                         </datalist>
                                     </div>
                                 </div>
@@ -899,23 +907,38 @@ $stmtResult = $stmt->get_result();
             <table class="table table-striped" id="table1">
                 <thead>
                 <tr>
-                    <th>Numero Ordine</th>
-                    <th>Cliente</th>
-                    <th>Data</th>
-                    <th>Ora</th>
-                    <th>Stato</th>
+                    <th>Piatto</th>
+                    <th>Descrizione</th>
+                    <th>Categoria</th>
+                    <th>Prezzo</th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php
-                if($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
+                $productRetriever = "SELECT *
+FROM products
+WHERE menu = ? 
+ORDER BY 
+    CASE 
+        WHEN category = 'Antipasti' THEN 1
+        WHEN category = 'Primi piatti' THEN 2
+        WHEN category = 'Secondi piatti' THEN 3
+        WHEN category = 'Pizze' THEN 4
+        ELSE 5  -- Qualsiasi altra categoria andrà in fondo
+    END;
+";
+                $stmt = $mysqli->prepare($productRetriever);
+                $stmt->bind_param("i", $stmtRow["menu_id"]);
+                $stmt->execute();
+                $stmtProduct = $stmt->get_result();
+
+                if($stmtProduct->num_rows > 0) {
+                while($rowProduct = $stmtProduct->fetch_assoc()) {
                 echo "<tr>";
-                    echo "<td>" . $row["order_id"] . "</td>";
-                    echo "<td>" . $row["name"] . $row["l_name"] ."</td>";
-                    echo "<td>" . $row["date"] . "</td>";
-                    echo "<td>" . $row["time"] . "</td>";
-                    echo "<td>" . $row["status"] . "</td>";
+                    echo "<td>" . $rowProduct["name"] . "</td>";
+                    echo "<td>" . $rowProduct["description"] . "</td>";
+                    echo "<td>" . $rowProduct["category"] . "</td>";
+                    echo "<td>" . $rowProduct["price"] . "€" ."</td>";
                     echo "</tr>";
                 }
                 } else {
