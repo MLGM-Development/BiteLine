@@ -42,12 +42,40 @@ $stmtResult = $stmt->get_result();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     $deleteId = $_POST['delete_id'];
-    $deleteQuery = "DELETE FROM products WHERE product_id = ?";
-    $stmt = $mysqli->prepare($deleteQuery);
+
+    // Retrieve the image path
+    $menuPhotoRetriever = "SELECT image_path FROM products WHERE product_id = ?";
+    $stmt = $mysqli->prepare($menuPhotoRetriever);
     $stmt->bind_param("i", $deleteId);
     $stmt->execute();
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit();
+    $result = $stmt->get_result();
+
+    if ($result) {
+        $imagePath = $result->fetch_assoc()['image_path'];
+        $stmt->close();
+
+        // Delete the product
+        $deleteQuery = "DELETE FROM products WHERE product_id = ?";
+        $stmt = $mysqli->prepare($deleteQuery);
+        $stmt->bind_param("i", $deleteId);
+        $stmt->execute();
+        $stmt->close();
+
+        // Delete the image file
+        $file = "../../../../assets/media/images/users/menu/" . $imagePath;
+        if (file_exists($file)) {
+            if (unlink($file)) {
+                echo "File deleted successfully";
+            } else {
+                echo "File not deleted";
+            }
+        }
+
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
+    } else {
+        echo "Error retrieving image path.";
+    }
 }
 
 
@@ -69,6 +97,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     <link rel="stylesheet" href="../../../../assets/bootstrap/extensions/filepond/filepond.css">
     <link rel="stylesheet" href="../../../../assets/bootstrap/extensions/filepond-plugin-image-preview/filepond-plugin-image-preview.css">
     <link rel="stylesheet" href="../../../../assets/bootstrap/extensions/toastify-js/src/toastify.css">
+
+    <link rel="stylesheet" href="../../../../assets/bootstrap/extensions/sweetalert2/sweetalert2.min.css">
 
   <link rel="stylesheet" href="../../../../assets/bootstrap/compiled/css/application-email.css">
   <link rel="stylesheet" href="../../../../assets/bootstrap/compiled/css/app.css">
@@ -933,7 +963,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
                 </div>
             </div>
         </div>
-
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 col-12">
+                    <button id="success" class="btn btn-outline-success btn-lg btn-block">Success</button>
+                    <button id="toast-success" class="btn btn-outline-primary btn-lg btn-block">Success Example</button>
+                </div>
+        </div>
         <form action=""  method="post" id="deleteForm">
             <input type="hidden" id="delete_id" name="delete_id">
         </form>
@@ -980,7 +1016,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
                     echo "<td>" . $rowProduct["description"] . "</td>";
                     echo "<td>" . $rowProduct["category"] . "</td>";
                     echo "<td>" . $rowProduct["price"] . "€" ."</td>";
-                    echo "<td> <a href=\"#\" class=\"btn btn-outline-danger\" onclick='deletePlate(" . $rowProduct['product_id'] . ")'>Elimina</a> </td>";
+                    echo "<td> <a href=\"#\" id='toast-success' class=\"btn btn-outline-danger\" onclick='deletePlate(" . $rowProduct['product_id'] . ")'>Elimina</a> </td>";
                     echo "</tr>";
                 }
                 } else {
@@ -1019,7 +1055,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     <script src="../../../../assets/bootstrap/extensions/filepond-plugin-image-preview/filepond-plugin-image-preview.min.js"></script>
     <script src="../../../../assets/bootstrap/extensions/filepond-plugin-image-resize/filepond-plugin-image-resize.min.js"></script>
     <script src="../../../../assets/bootstrap/extensions/filepond/filepond.js"></script>
+
+    <script src="../../../../assets/bootstrap/extensions/sweetalert2/sweetalert2.min.js"></script>>
+    <script src="../../../../assets/script/successAlertSweetalert2.js"></script>>
+
     <script src="../../../../assets/bootstrap/extensions/toastify-js/src/toastify.js"></script>
+
     <script src="../../../../assets/bootstrap/static/js/pages/filepond.js"></script>
 <script>
     document.querySelector('.sidebar-toggle').addEventListener('click', () => {

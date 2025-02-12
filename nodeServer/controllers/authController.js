@@ -68,17 +68,18 @@ const login = async (req, res) => {
         const token = jwt.sign(
             { id: user.id, role: role },
             secretKey,
-            {expiresIn: '744h'}
-        )
+            { expiresIn: '30d' } // 30 giorni
+        );
 
-        //Creazione del cookie
+        // Creazione del cookie
         res.cookie('auth_token', token, {
             httpOnly: true,
             secure: false,
-            maxAge: 60 * 60 * 24 * 24 * 24
-        })
+            maxAge: 60 * 60 * 24 * 30 * 1000 // 30 giorni in millisecondi
+        });
 
-        
+
+
         /*const sessionId = crypto.randomBytes(32).toString('hex')
         const expiry = Math.floor(Date.now() / 1000) + 2592000 //Imposto la scadenza
 
