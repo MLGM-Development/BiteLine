@@ -16,16 +16,11 @@ const Toast = Swal.mixin({
     }
 })
 
-document.getElementById("success").addEventListener("click", (e) => {
+
+const urlParam = new URLSearchParams(window.location.search);
+if (urlParam.get('action') === 'deleted') {
     Swal2.fire({
         icon: "success",
-        title: "Success",
+        title: "Eliminato con successo",
     })
-})
-
-document.getElementById('toast-success').addEventListener('click', () => {
-    Toast.fire({
-        icon: 'success',
-        title: 'Signed in successfully'
-    })
-})
+}
