@@ -13,12 +13,12 @@ if ($jwtToken) {
     }
 
     if ($payload['role'] !== 'owner'){
-        header('Location: ../../../errors/error-403.html');
+        header('Location: ../../errors/error-403.html');
     }
 
     $ownerId = $payload['id'];
 } else {
-    header('Location: ../../../errors/error-500.html');
+    header('Location: ../../errors/error-500.html');
 }
 
 $ownerId = $payload['id'];
@@ -181,7 +181,7 @@ if($result->num_rows > 0) {
                     </li>
 
                     <li class="submenu-item  ">
-                        <a href="../../../../../dash/extra-component-divider.html" class="submenu-link">Asporto/Consegna</a>
+                        <a href="deliver-menu-creator.php" class="submenu-link">Asporto/Consegna</a>
 
                     </li>
                 </ul>

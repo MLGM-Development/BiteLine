@@ -7,6 +7,7 @@ $description = $_POST["dplate"];
 $category = $_POST["dd-input"];
 $price = $_POST["price"];
 
+
 if(strlen($name) == 0 || strlen($description) == 0 || strlen($category) == 0 || strlen($price) == 0 || strlen($menu) == 0) {
     die("Errore: uno o più campi sono vuoti");
 }

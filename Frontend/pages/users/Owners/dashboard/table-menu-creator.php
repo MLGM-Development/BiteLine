@@ -18,12 +18,12 @@ if ($jwtToken) {
     }
 
     if ($payload['role'] !== 'owner'){
-        header('Location: ../../../errors/error-403.html');
+        header('Location: ../../errors/error-403.html');
     }
 
     $ownerId = $payload['id'];
 } else {
-    header('Location: ../../../errors/error-500.html');
+    header('Location: ../../errors/error-500.html');
 }
 
 $restaurantRetriever = "SELECT * FROM restaurants WHERE owner = ?";
@@ -182,12 +182,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
                 <ul class="submenu ">
 
                     <li class="submenu-item active ">
-                        <a href="../../../../../dash/extra-component-avatar.html" class="submenu-link">Menu Tavolo</a>
+                        <a href="table-menu-creator.php" class="submenu-link">Menu Tavolo</a>
 
                     </li>
 
                     <li class="submenu-item  ">
-                        <a href="../../../../../dash/extra-component-divider.html" class="submenu-link">Asporto/Consegna</a>
+                        <a href="deliver-menu-creator.php" class="submenu-link">Asporto/Consegna</a>
 
                     </li>
                 </ul>
@@ -963,9 +963,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
                 </div>
             </div>
         </div>
+
+        <!--TODO: Implementare questo modal-->
         <form action=""  method="post" id="deleteForm">
             <input type="hidden" id="delete_id" name="delete_id">
         </form>
+        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#danger">
+            Danger
+        </button>
+
+        <div class="modal fade text-left" id="danger" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel120" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+                 role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger">
+                        <h5 class="modal-title white" id="myModalLabel120">Danger Modal
+                        </h5>
+                        <button type="button" class="close" data-bs-dismiss="modal"
+                                aria-label="Close">
+                            <i data-feather="x"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Tart lemon drops macaroon oat cake chocolate toffee chocolate
+                        bar icing. Pudding jelly beans
+                        carrot cake pastry gummies cheesecake lollipop. I love cookie
+                        lollipop cake I love sweet
+                        gummi bears cupcake dessert.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light-secondary"
+                                data-bs-dismiss="modal">
+                            <i class="bx bx-x d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Close</span>
+                        </button>
+                        <button type="button" class="btn btn-danger ms-1"
+                                data-bs-dismiss="modal">
+                            <i class="bx bx-check d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Accept</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="card-body">
             <table class="table table-striped" id="table1">

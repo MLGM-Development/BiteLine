@@ -20,12 +20,12 @@ if ($jwtToken) {
     }
 
     if ($payload['role'] !== 'owner'){
-        header('Location: ../../../errors/error-403.html');
+        header('Location: ../../errors/error-403.html');
     }
 
     $ownerId = $payload['id'];
 } else {
-    header('Location: ../../../errors/error-500.html');
+    header('Location: ../../errors/error-500.html');
 }
 
 
@@ -112,7 +112,7 @@ if ($jwtToken) {
 
             <li
                     class="sidebar-item active ">
-                <a href="../../../../../dash/table-datatable.html" class='sidebar-link'>
+                <a href="table-datatable.php" class='sidebar-link'>
                     <i class="bi bi-file-earmark-spreadsheet-fill"></i>
                     <span>Ordini</span>
                 </a>
@@ -130,12 +130,12 @@ if ($jwtToken) {
                 <ul class="submenu ">
 
                     <li class="submenu-item  ">
-                        <a href="../../../../../dash/extra-component-avatar.html" class="submenu-link">Menu Tavolo</a>
+                        <a href="table-menu-creator.php" class="submenu-link">Menu Tavolo</a>
 
                     </li>
 
                     <li class="submenu-item  ">
-                        <a href="../../../../../dash/extra-component-divider.html" class="submenu-link">Asporto/Consegna</a>
+                        <a href="deliver-menu-creator.php" class="submenu-link">Asporto/Consegna</a>
 
                     </li>
                 </ul>
