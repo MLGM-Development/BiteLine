@@ -1,100 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordina Ora</title>
+    <link rel="stylesheet" href="../../../assets/css/OrderNow.css">
+    <link rel="stylesheet" href="../../../assets/css/universal/reset.css">
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <div class="header-icon">⏰</div>
-        <h1 class="header-title">Locali che potrebbero piacerti</h1>
-    </div>
+<header id="header"></header>
 
-    <div class="recommendations">
-        <!-- McDonald's Card -->
-        <div class="restaurant-card">
-            <div class="card-image-container">
-                <img src="/api/placeholder/300/150" alt="McCrunchy Chicken" class="card-image">
-                <div class="category-badge">Americano</div>
-                <div class="location-icon">📍</div>
-            </div>
-            <div class="card-content">
-                <h2 class="restaurant-name">McDonald's</h2>
-                <div class="restaurant-stats">
-                    <div class="rating">
-                        <span class="rating-icon">👍</span>
-                        <span class="rating-percentage">94%</span>
-                        <span class="rating-count">(500+)</span>
-                    </div>
-                    <div class="delivery-icon">🚚</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Burger King Card -->
-        <div class="restaurant-card">
-            <div class="card-image-container">
-                <img src="/api/placeholder/300/150" alt="Burger King" class="card-image">
-                <div class="category-badge">Americano</div>
-                <div class="location-icon">📍</div>
-            </div>
-            <div class="card-content">
-                <h2 class="restaurant-name">Burger King</h2>
-                <div class="restaurant-stats">
-                    <div class="rating">
-                        <span class="rating-icon">👍</span>
-                        <span class="rating-percentage">92%</span>
-                        <span class="rating-count">(480)</span>
-                    </div>
-                    <div class="delivery-icon">🚚</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Poke House Card -->
-        <div class="restaurant-card">
-            <div class="card-image-container">
-                <img src="/api/placeholder/300/150" alt="Hot & Spicy Poke" class="card-image">
-                <div class="category-badge">Sano</div>
-                <div class="location-icon">📍</div>
-                <div class="discount-badge">-30%</div>
-            </div>
-            <div class="card-content">
-                <h2 class="restaurant-name">Poke House</h2>
-                <div class="restaurant-stats">
-                    <div class="rating">
-                        <span class="rating-icon">👍</span>
-                        <span class="rating-percentage">84%</span>
-                        <span class="rating-count">(120)</span>
-                    </div>
-                    <div class="delivery-icon">🚚</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- La Piadineria Card -->
-        <div class="restaurant-card">
-            <div class="card-image-container">
-                <img src="/api/placeholder/300/150" alt="La Piadineria" class="card-image">
-                <div class="category-badge">Sano</div>
-                <div class="location-icon">📍</div>
-            </div>
-            <div class="card-content">
-                <h2 class="restaurant-name">La Piadineria</h2>
-                <div class="restaurant-stats">
-                    <div class="rating">
-                        <span class="rating-icon health-rating">👍</span>
-                        <span class="rating-percentage">99%</span>
-                        <span class="rating-count">(100)</span>
-                    </div>
-                    <div class="delivery-icon">🚚</div>
-                </div>
+<main>
+    <div class="container">
+        <h1>Ordina Ora</h1>
+        <div class="search-box">
+            <input type="text" placeholder="Cerca ristoranti o cucine...">
+            <div class="search-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
             </div>
         </div>
     </div>
-</div>
+</main>
 
+<section class="featured-section">
+    <div class="container">
+        <h2 class="section-title">Ristoranti in Evidenza</h2>
+        <div class="restaurant-cards" id="featured-restaurants">
+            <!-- Cards will be added here by JavaScript -->
+        </div>
+    </div>
+</section>
+
+<footer id="footer"></footer>
+<script src="../../../assets/script/OrderNow.js"></script>
 </body>
 </html>
