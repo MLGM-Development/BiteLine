@@ -758,7 +758,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
                 <ul class="submenu ">
                     
                     <li class="submenu-item  ">
-                        <a href="../../../../../dash/auth-login.html" class="submenu-link">Login</a>
+                        <a href="../../session/auth-login.html" class="submenu-link">Login</a>
                         
                     </li>
                     

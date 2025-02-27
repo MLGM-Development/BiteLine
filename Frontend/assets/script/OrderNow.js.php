@@ -1,30 +1,28 @@
-// Sample restaurant data
-const featuredRestaurants = [
-    {
-        name: "Da Zio Carpe",
-        image: "/api/placeholder/800/500",
-        description: "Autentica cucina italiana con un tocco contemporaneo. I nostri piatti sono preparati con ingredienti freschi e locali.",
-        rating: 4.8,
-        cuisine: "Italiana",
-        deliveryTime: "25-35 min"
-    },
-    {
-        name: "Calpi o Colpi?",
-        image: "/api/placeholder/800/500",
-        description: "Il miglior sushi in città con pesce fresco consegnato quotidianamente. Specialità di roll unici e sashimi di alta qualità.",
-        rating: 4.7,
-        cuisine: "Giapponese",
-        deliveryTime: "30-40 min"
-    },
-    {
-        name: "Giachi El Gringo",
-        image: "/api/placeholder/800/500",
-        description: "Autentico street food messicano con ricette tradizionali. I nostri tacos e burritos sono leggendari.",
-        rating: 4.6,
-        cuisine: "Messicana",
-        deliveryTime: "20-30 min"
-    }
-];
+<?php
+$mysqli = require __DIR__ . "/../../Backend/Database/connection.php";
+
+$restaurantRetriever = "SELECT * FROM restaurants";
+$restaurantRetrieverResult = $mysqli->query($restaurantRetriever);
+
+$restaurantData = array();
+
+while ($row = $restaurantRetrieverResult->fetch_assoc()) {
+    $restaurantData[] = array(
+        "name" => $row["name"],
+        "image" => $row["image_path"],
+        "description" => $row["description"],
+        "rating" => $row["rating"],
+        "cuisine" => $row["cuisine"],
+        //"deliveryTime" => $row["delivery_time"]
+    );
+}
+
+$mysqli->close();
+
+?>
+
+
+const featuredRestaurants = <?php echo json_encode($restaurantData) ?>
 
 // Function to render restaurant cards
 function renderRestaurants() {
@@ -49,7 +47,7 @@ function renderRestaurants() {
                         <p class="card-description">${restaurant.description}</p>
                         <div class="card-footer">
                             <span class="cuisine">${restaurant.cuisine}</span>
-                            <span class="delivery-time">${restaurant.deliveryTime}</span>
+                            <span class="delivery-time">DA IMPOSTARE</span>
                         </div>
                     </div>
                 `;

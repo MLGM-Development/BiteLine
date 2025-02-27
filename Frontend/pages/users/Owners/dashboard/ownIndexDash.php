@@ -752,7 +752,7 @@ if($result->num_rows > 0) {
                 <ul class="submenu ">
                     
                     <li class="submenu-item  ">
-                        <a href="../../../../../dash/auth-login.html" class="submenu-link">Login</a>
+                        <a href="../../session/auth-login.html" class="submenu-link">Login</a>
                         
                     </li>
                     
