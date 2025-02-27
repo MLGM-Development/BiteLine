@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOIR | BiteLine</title>
+    <link rel="stylesheet" href="../../../assets/css/OrderDashBoard.css">
+</head>
+<body>
+<div class="overlay" id="overlay"></div>
+
+<div class="app-container">
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">M</div>
+                <div class="logo-text">MONO</div>
+            </div>
+            <div class="close-sidebar" id="closeSidebar">✕</div>
+        </div>
+
+        <div class="menu-categories">
+            <div class="category active">
+                <div class="category-icon">◆</div>
+                <div class="category-name">Starters</div>
+            </div>
+            <div class="category">
+                <div class="category-icon">◆</div>
+                <div class="category-name">Salads</div>
+            </div>
+            <div class="category">
+                <div class="category-icon">◆</div>
+                <div class="category-name">Mains</div>
+            </div>
+            <div class="category">
+                <div class="category-icon">◆</div>
+                <div class="category-name">Pasta</div>
+            </div>
+            <div class="category">
+                <div class="category-icon">◆</div>
+                <div class="category-name">Grill</div>
+            </div>
+            <div class="category">
+                <div class="category-icon">◆</div>
+                <div class="category-name">Sides</div>
+            </div>
+            <div class="category">
+                <div class="category-icon">◆</div>
+                <div class="category-name">Desserts</div>
+            </div>
+            <div class="category">
+                <div class="category-icon">◆</div>
+                <div class="category-name">Drinks</div>
+            </div>
+        </div>
+
+        <div class="cart-area">
+            <div class="cart-header">
+                <div class="cart-title">Your Order</div>
+                <div class="cart-count">3</div>
+            </div>
+            <div class="cart-total">
+                <div class="total-label">Total:</div>
+                <div class="total-amount">$78.00</div>
+            </div>
+            <button class="checkout-btn">Checkout</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="mobile-header">
+            <div class="menu-toggle" id="menuToggle">☰</div>
+            <div class="mobile-logo">MONO</div>
+            <div class="mobile-cart">
+                🛒
+                <div class="mobile-cart-count">3</div>
+            </div>
+        </div>
+
+        <div class="content-inner">
+            <div class="search-container">
+                <div class="search-bar">
+                    <div class="search-icon">🔍</div>
+                    <input type="text" class="search-input" placeholder="Search menu...">
+                </div>
+            </div>
+
+            <div class="category-header">
+                <h2 class="category-title">Starters</h2>
+                <p class="category-desc">Begin your dining experience with our selection of carefully crafted starters featuring seasonal ingredients.</p>
+            </div>
+
+            <div class="filter-chips">
+                <div class="filter-chip active">All</div>
+                <div class="filter-chip">Vegetarian</div>
+                <div class="filter-chip">Vegan</div>
+                <div class="filter-chip">Gluten-Free</div>
+                <div class="filter-chip">Signature</div>
+                <div class="filter-chip">Spicy</div>
+            </div>
+
+            <div class="menu-grid">
+                <div class="menu-card">
+                    <img src="/api/placeholder/400/320" alt="Tuna Tartare" class="food-img">
+                    <div class="card-content">
+                        <div class="food-tags">
+                            <div class="food-tag">Signature</div>
+                            <div class="food-tag">GF</div>
+                        </div>
+                        <h3 class="food-title">Spicy Tuna Tartare</h3>
+                        <p class="food-desc">Diced yellowfin tuna with avocado, cucumber, sesame oil and crispy wontons.</p>
+                        <div class="card-footer">
+                            <div class="price">$19</div>
+                            <div class="add-btn">+</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-card">
+                    <img src="/api/placeholder/400/320" alt="Cauliflower Steak" class="food-img">
+                    <div class="card-content">
+                        <div class="food-tags">
+                            <div class="food-tag">Vegan</div>
+                            <div class="food-tag">GF</div>
+                        </div>
+                        <h3 class="food-title">Roasted Cauliflower</h3>
+                        <p class="food-desc">Harissa roasted cauliflower with tahini sauce, pomegranate and toasted pine nuts.</p>
+                        <div class="card-footer">
+                            <div class="price">$14</div>
+                            <div class="add-btn">+</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-card">
+                    <img src="/api/placeholder/400/320" alt="Beef Carpaccio" class="food-img">
+                    <div class="card-content">
+                        <div class="food-tags">
+                            <div class="food-tag">GF</div>
+                        </div>
+                        <h3 class="food-title">Beef Carpaccio</h3>
+                        <p class="food-desc">Thinly sliced prime beef with arugula, capers, parmesan and truffle oil.</p>
+                        <div class="card-footer">
+                            <div class="price">$17</div>
+                            <div class="add-btn">+</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-card">
+                    <img src="/api/placeholder/400/320" alt="Crab Cakes" class="food-img">
+                    <div class="card-content">
+                        <div class="food-tags">
+                            <div class="food-tag">Signature</div>
+                        </div>
+                        <h3 class="food-title">Crab Cakes</h3>
+                        <p class="food-desc">Maryland-style crab cakes with corn relish, micro greens and remoulade sauce.</p>
+                        <div class="card-footer">
+                            <div class="price">$21</div>
+                            <div class="add-btn">+</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-card">
+                    <img src="/api/placeholder/400/320" alt="Bruschetta" class="food-img">
+                    <div class="card-content">
+                        <div class="food-tags">
+                            <div class="food-tag">Vegetarian</div>
+                        </div>
+                        <h3 class="food-title">Bruschetta Trio</h3>
+                        <p class="food-desc">Toasted ciabatta with tomato & basil, wild mushroom, and roasted pepper toppings.</p>
+                        <div class="card-footer">
+                            <div class="price">$13</div>
+                            <div class="add-btn">+</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-card">
+                    <img src="/api/placeholder/400/320" alt="Truffle Fries" class="food-img">
+                    <div class="card-content">
+                        <div class="food-tags">
+                            <div class="food-tag">Vegetarian</div>
+                        </div>
+                        <h3 class="food-title">Truffle Parmesan Fries</h3>
+                        <p class="food-desc">Crispy hand-cut fries with truffle oil, parmesan, herbs and garlic aioli.</p>
+                        <div class="card-footer">
+                            <div class="price">$12</div>
+                            <div class="add-btn">+</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Mobile menu toggle functionality
+    const menuToggle = document.getElementById('menuToggle');
+    const closeSidebar = document.getElementById('closeSidebar');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+
+    function closeSidebarMenu() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    closeSidebar.addEventListener('click', closeSidebarMenu);
+    overlay.addEventListener('click', closeSidebarMenu);
+
+    // Category selection
+    document.querySelectorAll('.category').forEach(category => {
+        category.addEventListener('click', function() {
+            document.querySelector('.category.active').classList.remove('active');
+            this.classList.add('active');
+
+            // In a real application, this would load the corresponding menu items
+            document.querySelector('.category-title').textContent = this.querySelector('.category-name').textContent;
+
+            // Close sidebar on mobile after selection
+            if (window.innerWidth <= 768) {
+                closeSidebarMenu();
+            }
+        });
+    });
+
+    // Filter chips
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.addEventListener('click', function() {
+            document.querySelector('.filter-chip.active').classList.remove('active');
+            this.classList.add('active');
+        });
+    });
+
+    // Add to cart functionality
+    document.querySelectorAll('.add-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const cartCount = document.querySelector('.cart-count');
+            const mobileCartCount = document.querySelector('.mobile-cart-count');
+
+            const currentCount = parseInt(cartCount.textContent);
+            cartCount.textContent = currentCount + 1;
+            mobileCartCount.textContent = currentCount + 1;
+
+            this.textContent = "✓";
+            setTimeout(() => {
+                this.textContent = "+";
+            }, 800);
+        });
+    });
+</script>
+</body>
+</html>
