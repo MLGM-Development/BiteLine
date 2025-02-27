@@ -1,7 +1,7 @@
 // Sample restaurant data
 const featuredRestaurants = [
     {
-        name: "Trattoria Moderna",
+        name: "Da Zio Carpe",
         image: "/api/placeholder/800/500",
         description: "Autentica cucina italiana con un tocco contemporaneo. I nostri piatti sono preparati con ingredienti freschi e locali.",
         rating: 4.8,
@@ -9,7 +9,7 @@ const featuredRestaurants = [
         deliveryTime: "25-35 min"
     },
     {
-        name: "Sakura Sushi",
+        name: "Calpi o Colpi?",
         image: "/api/placeholder/800/500",
         description: "Il miglior sushi in città con pesce fresco consegnato quotidianamente. Specialità di roll unici e sashimi di alta qualità.",
         rating: 4.7,
@@ -17,7 +17,7 @@ const featuredRestaurants = [
         deliveryTime: "30-40 min"
     },
     {
-        name: "El Taqueria",
+        name: "Giachi El Gringo",
         image: "/api/placeholder/800/500",
         description: "Autentico street food messicano con ricette tradizionali. I nostri tacos e burritos sono leggendari.",
         rating: 4.6,
