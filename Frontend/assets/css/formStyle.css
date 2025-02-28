@@ -943,6 +943,11 @@ button:hover::before {
     word-wrap: break-word;
 }
 
+.bottom-form-link{
+    color: var(--accent-primary);
+    font-weight: bold;
+}
+
 .upload-placeholder span {
     color: var(--text-tertiary);
     font-size: 0.85rem;
