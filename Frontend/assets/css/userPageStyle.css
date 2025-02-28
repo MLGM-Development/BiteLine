@@ -1,0 +1,303 @@
+:root {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --card-secondary: #252525;
+    --text-color: #e0e0e0;
+    --text-secondary: #aaaaaa;
+    --accent-color: #8338ec;
+    --accent-secondary: #3a86ff;
+    --success-color: #4caf50;
+    --border-radius: 12px;
+    --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.profile-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.profile-subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media (min-width: 768px) {
+    .profile-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 30px;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.card-header {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.card-header::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 40px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary));
+    border-radius: 2px;
+}
+
+.card-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.personal-info {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+@media (min-width: 500px) {
+    .personal-info {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.info-group {
+    margin-bottom: 16px;
+}
+
+.info-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.info-value {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.order-item {
+    background-color: var(--card-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.order-restaurant {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.order-details {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.order-info {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.order-amount {
+    font-weight: 600;
+}
+
+.order-date {
+    margin-left: auto;
+}
+
+.order-status {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 50px;
+    background-color: rgba(76, 175, 80, 0.15);
+    color: var(--success-color);
+}
+
+.order-items {
+    font-size: 14px;
+    margin-top: 8px;
+    color: var(--text-secondary);
+}
+
+.stats-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+@media (min-width: 500px) {
+    .stats-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.stat-card {
+    background-color: var(--card-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    background: linear-gradient(90deg, var(--accent-secondary), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.favorite-restaurant {
+    margin-top: 24px;
+    background-color: var(--card-secondary);
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+}
+
+.restaurant-logo {
+    width: 60px;
+    height: 60px;
+    background-color: #333;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    font-size: 24px;
+    color: var(--accent-color);
+}
+
+.restaurant-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.restaurant-info {
+    flex-grow: 1;
+}
+
+.restaurant-name {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.restaurant-category {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.restaurant-stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.restaurant-stat {
+    padding-right: 20px;
+    border-right: 1px solid #333;
+}
+
+.restaurant-stat:last-child {
+    border-right: none;
+}
+
+.restaurant-stat-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.restaurant-stat-value {
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.badge {
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary));
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+}

@@ -3,14 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="../../../assets/css/universal/reset.css">
+    <link rel="stylesheet" href="../../../assets/css/userPageStyle.css">
+    <title>Profilo Personale | BiteLine</title>
 </head>
 <body>
-    <h1>Ciao</h1>
-    <button id="lobtn">Logout</button>
 
-    <script src="../../../assets/script/logout.js"></script>
+<header id="header"></header>
 
+<div class="container">
+    <div class="profile-header">
+        <h1 class="profile-title">Profilo Utente</h1>
+        <p class="profile-subtitle">Visualizza le tue informazioni</p>
+    </div>
+
+    <div class="profile-grid">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Personal Information</h2>
+            </div>
+            <div class="personal-info">
+                <div class="info-group">
+                    <div class="info-label">Full Name</div>
+                    <div class="info-value">Alex Johnson</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Email</div>
+                    <div class="info-value">alex.johnson@example.com</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Phone</div>
+                    <div class="info-value">+1 (555) 123-4567</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Date of Birth</div>
+                    <div class="info-value">May 15, 1988</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Address</div>
+                    <div class="info-value">123 Main Street, Apt 4B, New York, NY 10001</div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Member Since</div>
+                    <div class="info-value">March 2021</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Recent Orders</h2>
+            </div>
+            <div class="order-list">
+                <div class="order-item">
+                    <div class="order-restaurant">Sushi Paradise</div>
+                    <div class="order-details">
+                        <div class="order-info order-amount">$42.50</div>
+                        <div class="order-info order-date">Today, 7:35 PM</div>
+                    </div>
+                    <div class="order-items">2× California Roll, 1× Dragon Roll, 1× Miso Soup</div>
+                    <span class="order-status">Delivered</span>
+                </div>
+                <div class="order-item">
+                    <div class="order-restaurant">Urban Burger</div>
+                    <div class="order-details">
+                        <div class="order-info order-amount">$27.99</div>
+                        <div class="order-info order-date">Yesterday, 1:15 PM</div>
+                    </div>
+                    <div class="order-items">1× Double Cheeseburger, 1× Fries, 1× Vanilla Shake</div>
+                    <span class="order-status">Delivered</span>
+                </div>
+                <div class="order-item">
+                    <div class="order-restaurant">Pizza Express</div>
+                    <div class="order-details">
+                        <div class="order-info order-amount">$35.45</div>
+                        <div class="order-info order-date">Feb 25, 6:20 PM</div>
+                    </div>
+                    <div class="order-items">1× Pepperoni Pizza (Large), 1× Garlic Bread, 1× Coke</div>
+                    <span class="order-status">Delivered</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Order Statistics</h2>
+            </div>
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-value">47</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$1,287</div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">18</div>
+                    <div class="stat-label">Restaurants Tried</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4.8</div>
+                    <div class="stat-label">Average Rating</div>
+                </div>
+            </div>
+
+            <div class="favorite-restaurant">
+                <div class="badge">Most Ordered</div>
+                <div class="restaurant-header">
+                    <div class="restaurant-logo">SP</div>
+                    <div class="restaurant-info">
+                        <div class="restaurant-name">Sushi Paradise</div>
+                        <div class="restaurant-category">Japanese • Sushi • Asian</div>
+                    </div>
+                </div>
+                <div class="restaurant-stats">
+                    <div class="restaurant-stat">
+                        <div class="restaurant-stat-label">Orders</div>
+                        <div class="restaurant-stat-value">12</div>
+                    </div>
+                    <div class="restaurant-stat">
+                        <div class="restaurant-stat-label">Spent</div>
+                        <div class="restaurant-stat-value">$348.50</div>
+                    </div>
+                    <div class="restaurant-stat">
+                        <div class="restaurant-stat-label">Last Order</div>
+                        <div class="restaurant-stat-value">Today</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Frequently Ordered Items</h2>
+            </div>
+            <div class="order-list">
+                <div class="order-item">
+                    <div class="order-restaurant">California Roll</div>
+                    <div class="order-details">
+                        <div class="order-info">Sushi Paradise</div>
+                        <div class="order-info order-amount">$8.99</div>
+                    </div>
+                    <div class="order-items">Ordered 9 times</div>
+                </div>
+                <div class="order-item">
+                    <div class="order-restaurant">Double Cheeseburger</div>
+                    <div class="order-details">
+                        <div class="order-info">Urban Burger</div>
+                        <div class="order-info order-amount">$12.50</div>
+                    </div>
+                    <div class="order-items">Ordered 7 times</div>
+                </div>
+                <div class="order-item">
+                    <div class="order-restaurant">Pepperoni Pizza</div>
+                    <div class="order-details">
+                        <div class="order-info">Pizza Express</div>
+                        <div class="order-info order-amount">$18.99</div>
+                    </div>
+                    <div class="order-items">Ordered 5 times</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer id="footer"></footer>
+
+<button id="lobtn">Logout</button>
+<script src="../../../assets/script/logout.js"></script>
+<script src="../../../routes/componentLoader.js"></script>
 
 </body>
 </html>

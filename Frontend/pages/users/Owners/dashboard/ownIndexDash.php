@@ -757,7 +757,7 @@ if($result->num_rows > 0) {
                     </li>
                     
                     <li class="submenu-item  ">
-                        <a href="../../../../../dash/auth-register.html" class="submenu-link">Register</a>
+                        <a href="../../Customers/RegCustomer.html" class="submenu-link">Register</a>
                         
                     </li>
                     

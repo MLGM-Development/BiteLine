@@ -11,6 +11,7 @@ footer {
     background: var(--bg-secondary);
     padding: 70px 0 30px;
     position: relative;
+
 }
 
 footer::before {

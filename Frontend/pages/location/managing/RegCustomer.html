@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="../../../assets/bootstrap/compiled/css/app.css">
     <link rel="stylesheet" href="../../../assets/bootstrap/compiled/css/app-dark.css">
     <link rel="stylesheet" href="../../../assets/bootstrap/compiled/css/auth.css">
+
+    <link rel="stylesheet" href="../../../assets/bootstrap/extensions/filepond/filepond.css">
+    <link rel="stylesheet" href="../../../assets/bootstrap/extensions/filepond-plugin-image-preview/filepond-plugin-image-preview.css">
 </head>
 <body>
     <script src="../../../assets/bootstrap/static/js/initTheme.js"></script>
@@ -27,21 +30,44 @@
 
                     <form action="../../../../Backend/Controllers/SessionControllers/CustomerSignup.php" method="post">
                         <div class="form-group position-relative has-icon-left mb-4">
-                            <input type="text" class="form-control form-control-xl" placeholder="Nome" name="name" id="name" required>
+                            <label for="filepond--browser-vup0l3j4c">Immagine</label>
+                            <div class="filepond--root image-filter-filepond filepond--hopper" data-style-button-remove-item-position="left" data-style-button-process-item-position="right" data-style-load-indicator-position="right" data-style-progress-indicator-position="right" data-style-button-remove-item-align="false" style="height: 76px;">
+                                <input class="filepond--browser" type="file" id="filepond--browser-vup0l3j4c" aria-controls="filepond--assistant-vup0l3j4c" aria-labelledby="filepond--drop-label-vup0l3j4c" accept="image/png,image/jpg,image/jpeg" name="filepond">
+
+                                <div class="filepond--drop-label" style="transform: translate3d(0px, 0px, 0px); opacity: 1;">
+                                    <label for="filepond--browser-vup0l3j4c" id="filepond--drop-label-vup0l3j4c" aria-hidden="true">S &amp; Trascina i tuoi file o <span class="filepond--label-action" tabindex="0">Sfoglia</span></label></div><div class="filepond--list-scroller" style="transform: translate3d(0px, 0px, 0px);color: #0d0d0d;">
+                                    <ul class="filepond--list" role="list"></ul>
+                                </div>
+
+                                <div class="filepond--panel filepond--panel-root" data-scalable="true">
+                                    <div class="filepond--panel-top filepond--panel-root"></div>
+                                    <div class="filepond--panel-center filepond--panel-root" style="transform: translate3d(0px, 8px, 0px) scale3d(1, 0.6, 1);"></div>
+                                    <div class="filepond--panel-bottom filepond--panel-root" style="transform: translate3d(0px, 68px, 0px);"></div>
+                                </div>
+
+                                <span class="filepond--assistant" id="filepond--assistant-vup0l3j4c" role="status" aria-live="polite" aria-relevant="additions"></span>
+                                <fieldset class="filepond--data"></fieldset>
+                                <div class="filepond--drip"></div>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group position-relative has-icon-left mb-4">
+                            <input type="text" class="form-control form-control-xl" placeholder="Nome ristorante" name="resName" id="resName" required>
+                            <div class="form-control-icon">
+                                <i class="bi bi-building"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group position-relative has-icon-left mb-4">
+                            <input type="text" class="form-control form-control-xl" placeholder="Indirizzo" name="address" id="address" required>
                             <div class="form-control-icon">
                                 <i class="bi bi-person"></i>
                             </div>
                         </div>
 
                         <div class="form-group position-relative has-icon-left mb-4">
-                            <input type="text" class="form-control form-control-xl" placeholder="Cognome" name="surname" id="surname" required>
-                            <div class="form-control-icon">
-                                <i class="bi bi-person"></i>
-                            </div>
-                        </div>
-
-                        <div class="form-group position-relative has-icon-left mb-4">
-                            <input type="text" class="form-control form-control-xl" placeholder="Email" id="email" name="email" required>
+                            <input type="text" class="form-control form-control-xl" placeholder="Email ristorante" id="resMail" name="resMail" required>
                             <div class="form-control-icon">
                                 <i class="bi bi-envelope"></i>
                             </div>
@@ -61,7 +87,7 @@
                         <button class="btn btn-primary btn-block btn-lg shadow-lg mt-5">Registrati</button>
                     </form>
                     <div class="text-center mt-5 text-lg fs-4">
-                        <p class='text-gray-600'>Hai già un account? <a href="../session/auth-login.html" class="font-bold">Log in</a>.</p>
+                        <p class='text-gray-600'>Hai già un account? <a href="../../users/session/auth-login.html" class="font-bold">Log in</a>.</p>
                     </div>
                 </div>
             </div>
@@ -73,6 +99,16 @@
         </div>
     </div>
 
+    <script src="../../../assets/bootstrap/extensions/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js"></script>
+    <script src="../../../assets/bootstrap/extensions/filepond-plugin-file-validate-type/filepond-plugin-file-validate-type.min.js"></script>
+    <script src="../../../assets/bootstrap/extensions/filepond-plugin-image-crop/filepond-plugin-image-crop.min.js"></script>
+    <script src="../../../assets/bootstrap/extensions/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js"></script>
+    <script src="../../../assets/bootstrap/extensions/filepond-plugin-image-filter/filepond-plugin-image-filter.min.js"></script>
+    <script src="../../../assets/bootstrap/extensions/filepond-plugin-image-preview/filepond-plugin-image-preview.min.js"></script>
+    <script src="../../../assets/bootstrap/extensions/filepond-plugin-image-resize/filepond-plugin-image-resize.min.js"></script>
+    <script src="../../../assets/bootstrap/extensions/filepond/filepond.js"></script>
+    <script src="../../../assets/bootstrap/static/js/pages/filepond.js"></script>
+
 </body>
 
-</html
+</html>
