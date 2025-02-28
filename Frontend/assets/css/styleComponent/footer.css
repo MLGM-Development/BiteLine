@@ -11,6 +11,8 @@ footer {
     background: var(--bg-secondary);
     padding: 70px 0 30px;
     position: relative;
+    line-height: 1.6;
+    font-family: mulish, serif;
 
 }
 
@@ -36,6 +38,7 @@ footer::before {
     margin-bottom: 20px;
     position: relative;
     display: inline-block;
+    color: var(--text-primary);
 }
 
 .footer-column h3::after {
@@ -72,4 +75,10 @@ footer::before {
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     color: var(--text-secondary);
     font-size: 0.9rem;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
