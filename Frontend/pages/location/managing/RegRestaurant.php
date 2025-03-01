@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         die("Errore nella preparazione della query: " . $mysqli->error);
     }
 
-    $stmt->bind_param("ssssssis", $imagePath, $restaurantName, $description, $address, $email, $phone, $cuisine, $payload['id']);
+    $stmt->bind_param("sssssssi", $imagePath, $restaurantName, $description, $address, $email, $phone, $cuisine, $payload['id']);
 
     if ($stmt->execute()) {
         header("Location: ../../users/Owners/dashboard/ownIndexDash.php");

@@ -1,3 +1,36 @@
+<?php
+$mysqli = require __DIR__ . "/../../../../Backend/Database/connection.php";
+require __DIR__ . "/../../../../Backend/Controllers/Cookies/JWT_Verifier.php";
+
+$jwtToken = getJwtToken();
+
+if ($jwtToken) {
+    // Verify JWT token and extract payload
+    $payload = verifyJwtToken($jwtToken);
+
+    if (!isset($payload['id'])) {
+        die('User not authenticated');
+    }
+
+    $userId = $payload['id'];
+} else {
+    header('Location: ../../errors/error-403.html');
+}
+
+$resIdURL = $_GET['restaurant_id'];
+
+$foodRetriever = 'SELECT * FROM products, menus 
+         WHERE menu = menu_id 
+           AND menus.restaurant_id = ?';
+
+$stmt = $mysqli->prepare($foodRetriever);
+$stmt->bind_param("i", $resIdURL);
+$stmt->execute();
+$result = $stmt->get_result();
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
