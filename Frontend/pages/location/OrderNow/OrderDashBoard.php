@@ -28,19 +28,46 @@ $stmt->bind_param("i", $resIdURL);
 $stmt->execute();
 $result = $stmt->get_result();
 
+$menu_items = [];
+while ($row = $result->fetch_assoc()) {
+    $menu_items[] = $row;
+}
 
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu Tavolo | BiteLine</title>
-    <link rel="stylesheet" href="../../../assets/css/OrderDashBoard.css">
+
+    <link rel="stylesheet" href="../../../assets/css/OrderBoard.css">
 </head>
+
 <body>
 <div class="overlay" id="overlay"></div>
+<div class="mobile-cart-overlay" id="mobileCartOverlay">
+    <div class="mobile-cart-panel">
+        <div class="mobile-cart-header">
+            <div class="mobile-cart-title">Your Order</div>
+            <div class="mobile-cart-close" id="mobileCartClose">×</div>
+        </div>
+        <div class="mobile-cart-items" id="mobileCartItems">
+            <!-- Mobile cart items will be displayed here -->
+        </div>
+        <div class="mobile-cart-footer">
+            <div class="cart-total">
+                <div class="total-label">Total:</div>
+                <div class="total-amount" id="mobileCartTotal">$0.00</div>
+            </div>
+            <button class="checkout-btn" id="mobileCheckoutBtn" disabled>Checkout</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast">Item added to cart</div>
 
 <div class="app-container">
     <div class="sidebar" id="sidebar">
@@ -51,52 +78,36 @@ $result = $stmt->get_result();
             </div>
             <div class="close-sidebar" id="closeSidebar">✕</div>
         </div>
-
         <div class="menu-categories">
-            <div class="category active">
-                <div class="category-icon">◆</div>
-                <div class="category-name">Starters</div>
-            </div>
-            <div class="category">
-                <div class="category-icon">◆</div>
-                <div class="category-name">Salads</div>
-            </div>
-            <div class="category">
-                <div class="category-icon">◆</div>
-                <div class="category-name">Mains</div>
-            </div>
-            <div class="category">
-                <div class="category-icon">◆</div>
-                <div class="category-name">Pasta</div>
-            </div>
-            <div class="category">
-                <div class="category-icon">◆</div>
-                <div class="category-name">Grill</div>
-            </div>
-            <div class="category">
-                <div class="category-icon">◆</div>
-                <div class="category-name">Sides</div>
-            </div>
-            <div class="category">
-                <div class="category-icon">◆</div>
-                <div class="category-name">Desserts</div>
-            </div>
-            <div class="category">
-                <div class="category-icon">◆</div>
-                <div class="category-name">Drinks</div>
-            </div>
+        <?php
+            $categories = array_unique(array_column($menu_items, 'category'));
+            foreach ($categories as $category) {
+                echo "
+                        <div class=\"category\">
+                            <div class=\"category-icon\">◆</div>
+                            <div class=\"category-name\">" . htmlspecialchars($category) ."</div>
+                        </div>
+                ";
+            }
+
+        ?>
         </div>
+
 
         <div class="cart-area">
             <div class="cart-header">
                 <div class="cart-title">Your Order</div>
-                <div class="cart-count">3</div>
+                <div class="cart-count" id="cartCount">0</div>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items will be displayed here -->
+                <div class="cart-empty" id="cartEmpty">Your cart is empty</div>
             </div>
             <div class="cart-total">
                 <div class="total-label">Total:</div>
-                <div class="total-amount">$78.00</div>
+                <div class="total-amount" id="cartTotal">$0.00</div>
             </div>
-            <button class="checkout-btn">Checkout</button>
+            <button class="checkout-btn" id="checkoutBtn" disabled>Checkout</button>
         </div>
     </div>
 
@@ -104,9 +115,9 @@ $result = $stmt->get_result();
         <div class="mobile-header">
             <div class="menu-toggle" id="menuToggle">☰</div>
             <div class="mobile-logo">MONO</div>
-            <div class="mobile-cart">
+            <div class="mobile-cart" id="mobileCartBtn">
                 🛒
-                <div class="mobile-cart-count">3</div>
+                <div class="mobile-cart-count" id="mobileCartCount">0</div>
             </div>
         </div>
 
@@ -120,177 +131,56 @@ $result = $stmt->get_result();
 
             <div class="category-header">
                 <h2 class="category-title">Starters</h2>
-                <p class="category-desc">Begin your dining experience with our selection of carefully crafted starters featuring seasonal ingredients.</p>
-            </div>
-
-            <div class="filter-chips">
-                <div class="filter-chip active">All</div>
-                <div class="filter-chip">Vegetarian</div>
-                <div class="filter-chip">Vegan</div>
-                <div class="filter-chip">Gluten-Free</div>
-                <div class="filter-chip">Signature</div>
-                <div class="filter-chip">Spicy</div>
+                <p class="category-desc">Begin your dining experience with our selection of carefully crafted
+                    starters featuring seasonal ingredients.</p>
             </div>
 
             <div class="menu-grid">
-                <div class="menu-card">
-                    <img src="/api/placeholder/400/320" alt="Tuna Tartare" class="food-img">
-                    <div class="card-content">
-                        <div class="food-tags">
-                            <div class="food-tag">Signature</div>
-                            <div class="food-tag">GF</div>
-                        </div>
-                        <h3 class="food-title">Spicy Tuna Tartare</h3>
-                        <p class="food-desc">Diced yellowfin tuna with avocado, cucumber, sesame oil and crispy wontons.</p>
-                        <div class="card-footer">
-                            <div class="price">$19</div>
-                            <div class="add-btn">+</div>
-                        </div>
-                    </div>
-                </div>
+                <?php
+                $foodRetriever = 'SELECT products.name AS product_name, products.description, products.price, 
+                         products.image_path, products.category 
+                  FROM products 
+                  INNER JOIN menus ON products.menu = menus.menu_id 
+                  WHERE menus.restaurant_id = ?';
 
-                <div class="menu-card">
-                    <img src="/api/placeholder/400/320" alt="Cauliflower Steak" class="food-img">
-                    <div class="card-content">
-                        <div class="food-tags">
-                            <div class="food-tag">Vegan</div>
-                            <div class="food-tag">GF</div>
-                        </div>
-                        <h3 class="food-title">Roasted Cauliflower</h3>
-                        <p class="food-desc">Harissa roasted cauliflower with tahini sauce, pomegranate and toasted pine nuts.</p>
-                        <div class="card-footer">
-                            <div class="price">$14</div>
-                            <div class="add-btn">+</div>
-                        </div>
-                    </div>
-                </div>
+                $stmt = $mysqli->prepare($foodRetriever);
+                $stmt->bind_param("i", $resIdURL);
+                $stmt->execute();
+                $result = $stmt->get_result();
 
-                <div class="menu-card">
-                    <img src="/api/placeholder/400/320" alt="Beef Carpaccio" class="food-img">
-                    <div class="card-content">
-                        <div class="food-tags">
-                            <div class="food-tag">GF</div>
-                        </div>
-                        <h3 class="food-title">Beef Carpaccio</h3>
-                        <p class="food-desc">Thinly sliced prime beef with arugula, capers, parmesan and truffle oil.</p>
-                        <div class="card-footer">
-                            <div class="price">$17</div>
-                            <div class="add-btn">+</div>
-                        </div>
-                    </div>
-                </div>
+                if($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo "
+    <div class=\"menu-card\">
+        <img src=\"/BiteLine/Frontend/assets/media/images/users/menu/" . htmlspecialchars($row["image_path"]) . " \" 
+             alt=\"" . htmlspecialchars($row["product_name"]) ."\" 
+             class=\"food-img\">
+        <div class=\"card-content\">
+            <div class=\"food-tags\">
+                <div class=\"food-tag\">" . htmlspecialchars($row["category"]) ."</div>
+            </div>
+            <h3 class=\"food-title\">" . htmlspecialchars($row["product_name"]) ."</h3>
+            <p class=\"food-desc\">" . htmlspecialchars($row["description"]) ."</p>
+            <div class=\"card-\">
+                <div class=\"price\">$" . htmlspecialchars($row["price"]) ."</div>
+                <div class=\"add-btn\">+</div>
+            </div>
+        </div>
+    </div>
+    ";
+                    }
+                }
 
-                <div class="menu-card">
-                    <img src="/api/placeholder/400/320" alt="Crab Cakes" class="food-img">
-                    <div class="card-content">
-                        <div class="food-tags">
-                            <div class="food-tag">Signature</div>
-                        </div>
-                        <h3 class="food-title">Crab Cakes</h3>
-                        <p class="food-desc">Maryland-style crab cakes with corn relish, micro greens and remoulade sauce.</p>
-                        <div class="card-footer">
-                            <div class="price">$21</div>
-                            <div class="add-btn">+</div>
-                        </div>
-                    </div>
-                </div>
+?>
 
-                <div class="menu-card">
-                    <img src="/api/placeholder/400/320" alt="Bruschetta" class="food-img">
-                    <div class="card-content">
-                        <div class="food-tags">
-                            <div class="food-tag">Vegetarian</div>
-                        </div>
-                        <h3 class="food-title">Bruschetta Trio</h3>
-                        <p class="food-desc">Toasted ciabatta with tomato & basil, wild mushroom, and roasted pepper toppings.</p>
-                        <div class="card-footer">
-                            <div class="price">$13</div>
-                            <div class="add-btn">+</div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="menu-card">
-                    <img src="/api/placeholder/400/320" alt="Truffle Fries" class="food-img">
-                    <div class="card-content">
-                        <div class="food-tags">
-                            <div class="food-tag">Vegetarian</div>
-                        </div>
-                        <h3 class="food-title">Truffle Parmesan Fries</h3>
-                        <p class="food-desc">Crispy hand-cut fries with truffle oil, parmesan, herbs and garlic aioli.</p>
-                        <div class="card-footer">
-                            <div class="price">$12</div>
-                            <div class="add-btn">+</div>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
 </div>
 
-<script>
-    // Mobile menu toggle functionality
-    const menuToggle = document.getElementById('menuToggle');
-    const closeSidebar = document.getElementById('closeSidebar');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-
-    menuToggle.addEventListener('click', () => {
-        sidebar.classList.add('active');
-        overlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    });
-
-    function closeSidebarMenu() {
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    closeSidebar.addEventListener('click', closeSidebarMenu);
-    overlay.addEventListener('click', closeSidebarMenu);
-
-    // Category selection
-    document.querySelectorAll('.category').forEach(category => {
-        category.addEventListener('click', function() {
-            document.querySelector('.category.active').classList.remove('active');
-            this.classList.add('active');
-
-            // In a real application, this would load the corresponding menu items
-            document.querySelector('.category-title').textContent = this.querySelector('.category-name').textContent;
-
-            // Close sidebar on mobile after selection
-            if (window.innerWidth <= 768) {
-                closeSidebarMenu();
-            }
-        });
-    });
-
-    // Filter chips
-    document.querySelectorAll('.filter-chip').forEach(chip => {
-        chip.addEventListener('click', function() {
-            document.querySelector('.filter-chip.active').classList.remove('active');
-            this.classList.add('active');
-        });
-    });
-
-    // Add to cart functionality
-    document.querySelectorAll('.add-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const cartCount = document.querySelector('.cart-count');
-            const mobileCartCount = document.querySelector('.mobile-cart-count');
-
-            const currentCount = parseInt(cartCount.textContent);
-            cartCount.textContent = currentCount + 1;
-            mobileCartCount.textContent = currentCount + 1;
-
-            this.textContent = "✓";
-            setTimeout(() => {
-                this.textContent = "+";
-            }, 800);
-        });
-    });
-</script>
+<script src="../../../assets/script/orderDashScript.js"></script>
 </body>
+
 </html>
