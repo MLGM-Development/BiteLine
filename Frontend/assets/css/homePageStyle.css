@@ -142,6 +142,7 @@ section::before{
     transition: .3s;
 }
 
+/*
 main{
     width: 100%;
     height: 100vh;
@@ -149,9 +150,10 @@ main{
     display: flex;
     justify-content: center;
     align-items: center;
-}
+}*/
+
 .sponsor>*{
-    font-family: Mulish, serif;
+    font-family: "Mulish", serif;
 }
 .sponsorEl>p:hover{
     color: var(--header-bg);
@@ -211,4 +213,77 @@ main{
     #subtitle{
         max-width: 40ch;
     }
+}
+
+
+/* Sezione Come Funziona, aggiunta il 01/03/2025 da Matteo Loi */
+.how-it-works {
+    padding: 80px 20px; /* Ridotto da 80px a 40px */
+    text-align: center;
+    margin-top: -700px; /* Valore negativo per ridurre lo spazio sopra */
+    font-family: "Mulish", serif;
+    /* background: aliceblue; questo colore è solo per testare la sezione e riuscire a riconoscere che parte di pagina ricopre */
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5em;
+    margin-bottom: 30px; /* Ridotto da 50px a 30px */
+    color: #ffffff;
+}
+
+.steps-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.step {
+    width: 250px;
+    margin: 15px; /* Ridotto da 20px a 15px */
+    padding: 15px; /* Ridotto da 20px a 15px */
+    text-align: center;
+    position: relative;
+}
+
+/* Il resto del CSS rimane invariato */
+.step-number {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background-color: #0099cc;
+    color: white;
+    border-radius: 50%;
+    line-height: 40px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.step h3 {
+    color: #f7d417;
+    margin: 15px 0;
+}
+
+.step p {
+    color: #ccc;
+    line-height: 1.6;
+}
+
+/* Correggi il container principale */
+.main-container {
+    width: 100%;
+    max-width: 1200px; /* Aumenta questo valore per adattarlo meglio a schermi grandi */
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Media query per schermi desktop */
+@media screen and (min-width: 992px) {
+    .main-container {
+        width: 85%; /* Su desktop può occupare una percentuale dello schermo */
+    }
+
+    /* Qui puoi aggiungere altre regole specifiche per desktop */
 }
