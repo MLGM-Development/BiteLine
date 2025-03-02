@@ -60,63 +60,12 @@ document.addEventListener('DOMContentLoaded', function() {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation | BiteLine</title>
-    <style>
-        .confirmation-container {
-            max-width: 600px;
-            margin: 100px auto;
-            padding: 30px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .success-icon {
-            width: 100px;
-            height: 100px;
-            margin: 20px auto;
-            background-color: #4caf50;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .success-icon svg {
-            width: 60px;
-            height: 60px;
-            fill: white;
-        }
-
-        h1 {
-            color: #4caf50;
-            margin-bottom: 20px;
-        }
-
-        .order-number {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #ff5722;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            text-decoration: none;
-            margin-top: 30px;
-        }
-    </style>
+    <title>Conferma Ordine | BiteLine</title>
+    <link rel="stylesheet" href="../../../assets/css/confirmOrderStyle.css">
 </head>
 <body>
 <div class="confirmation-container">
@@ -125,11 +74,12 @@ document.addEventListener('DOMContentLoaded', function() {
             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
         </svg>
     </div>
-    <h1>Order Placed Successfully!</h1>
-    <p>Thank you for your order. We've received your payment and are preparing your food.</p>
-    <div class="order-number">Order #<?php echo htmlspecialchars($orderId); ?></div>
-    <p>You will receive an email confirmation shortly.</p>
-    <a href="OrderPage.html" class="button">Return to Dashboard</a>
+    <h1>Ordine Effettuato con Successo!</h1>
+    <p>Grazie per il tuo ordine. Abbiamo ricevuto il tuo pagamento e stiamo preparando il tuo cibo.</p>
+    <div class="order-number">Ordine #<?php echo htmlspecialchars($orderId); ?></div>
+    <p>Riceverai a breve un'email di conferma.</p>
+    <a href="OrderPage.html" class="button">Torna alla pagina di ordinazione</a>
+    <div class="company-logo">BiteLine</div>
 </div>
 </body>
 </html>
