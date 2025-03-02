@@ -8,7 +8,7 @@ document.querySelector('#lobtn').addEventListener('click', async () => {
         //se il fetch va a buon fine allora lo reindirizza al login
         if (response.ok) {
             alert('Logout effettuato con successo');
-            window.location.href = '/BiteLine/Frontend/pages/users/session/login.html';
+            window.location.href = '/BiteLine/Frontend/pages/users/session/auth-login.html';
         } else {
             alert('Errore durante il logout'); //Errore
         }

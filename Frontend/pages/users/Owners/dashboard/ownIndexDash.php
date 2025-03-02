@@ -46,7 +46,7 @@ if($result->num_rows > 0) {
     $resultEmp = $stmtempNumb->get_result();
     $rowEmp = $resultEmp->fetch_assoc();
 
-    $numOrder = "SELECT COUNT(user_id) FROM orders, users WHERE restaurant_id = ? AND customer_id = user_id";
+    $numOrder = "SELECT COUNT(users.user_id) FROM orders, users WHERE restaurant_id = ? AND orders.user_id = users.user_id";
     $stmtNumOrder = $mysqli->prepare($numOrder);
     $stmtNumOrder->bind_param("i", $row["restaurant_id"]);
     $stmtNumOrder->execute();
@@ -60,7 +60,7 @@ if($result->num_rows > 0) {
     $resultNumClient = $stmtNumClient->get_result();
     $rowNumClient = $resultNumClient->fetch_assoc();
 
-    $top3product = "SELECT products.product_id, name, COUNT(orderproduct.product_id) as num FROM orderproduct, products WHERE products.product_id = orderproduct.product_id GROUP BY product_id, name ORDER BY num DESC LIMIT 3";
+    $top3product = "SELECT products.product_id, name, COUNT(order_items.product_id) as num FROM order_items, products WHERE products.product_id = order_items.product_id GROUP BY product_id, name ORDER BY num DESC LIMIT 3";
     $stmtTop3product = $mysqli->prepare($top3product);
     $stmtTop3product->execute();
     $resultTop3product = $stmtTop3product->get_result();
@@ -898,7 +898,7 @@ if($result->num_rows > 0) {
                                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
                                     <h6 class="text-muted font-semibold">Clienti</h6>
                                     <h6 class="font-extrabold mb-0">
-                                        <?php echo $rowNumOrder["COUNT(user_id)"] ?>
+                                        <?php echo $rowNumOrder["COUNT(users.user_id)"] ?>
                                     </h6>
                                 </div>
                             </div>

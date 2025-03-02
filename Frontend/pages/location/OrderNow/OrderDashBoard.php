@@ -19,6 +19,13 @@ if ($jwtToken) {
 
 $resIdURL = $_GET['restaurant_id'];
 
+$resDataRetiever = 'SELECT * FROM restaurants WHERE restaurant_id = ?';
+$stmt = $mysqli->prepare($resDataRetiever);
+$stmt->bind_param("i", $resIdURL);
+$stmt->execute();
+$result = $stmt->get_result();
+$rowRes = $result->fetch_assoc();
+
 $foodRetriever = 'SELECT * FROM products, menus 
          WHERE menu = menu_id 
            AND menus.restaurant_id = ?';
@@ -41,7 +48,7 @@ while ($row = $result->fetch_assoc()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Tavolo | BiteLine</title>
+    <title>Menu | BiteLine</title>
 
     <link rel="stylesheet" href="../../../assets/css/OrderBoard.css">
 </head>
@@ -51,7 +58,7 @@ while ($row = $result->fetch_assoc()) {
 <div class="mobile-cart-overlay" id="mobileCartOverlay">
     <div class="mobile-cart-panel">
         <div class="mobile-cart-header">
-            <div class="mobile-cart-title">Your Order</div>
+            <div class="mobile-cart-title">Il tuo ordine:</div>
             <div class="mobile-cart-close" id="mobileCartClose">×</div>
         </div>
         <div class="mobile-cart-items" id="mobileCartItems">
@@ -59,22 +66,22 @@ while ($row = $result->fetch_assoc()) {
         </div>
         <div class="mobile-cart-footer">
             <div class="cart-total">
-                <div class="total-label">Total:</div>
-                <div class="total-amount" id="mobileCartTotal">$0.00</div>
+                <div class="total-label">Totale:</div>
+                <div class="total-amount" id="mobileCartTotal">€0.00</div>
             </div>
             <button class="checkout-btn" id="mobileCheckoutBtn" disabled>Checkout</button>
         </div>
     </div>
 </div>
 
-<div class="toast" id="toast">Item added to cart</div>
+<div class="toast" id="toast">Aggiunto al carrello</div>
 
 <div class="app-container">
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <div class="logo-icon">M</div>
-                <div class="logo-text">MONO</div>
+                <div class="logo-text"><?php echo $rowRes["name"] ?></div>
             </div>
             <div class="close-sidebar" id="closeSidebar">✕</div>
         </div>
@@ -96,16 +103,16 @@ while ($row = $result->fetch_assoc()) {
 
         <div class="cart-area">
             <div class="cart-header">
-                <div class="cart-title">Your Order</div>
+                <div class="cart-title">Il tuo ordine:</div>
                 <div class="cart-count" id="cartCount">0</div>
             </div>
             <div class="cart-items" id="cartItems">
                 <!-- Cart items will be displayed here -->
-                <div class="cart-empty" id="cartEmpty">Your cart is empty</div>
+                <div class="cart-empty" id="cartEmpty">Carrello vuoto</div>
             </div>
             <div class="cart-total">
-                <div class="total-label">Total:</div>
-                <div class="total-amount" id="cartTotal">$0.00</div>
+                <div class="total-label">Totale:</div>
+                <div class="total-amount" id="cartTotal">€0.00</div>
             </div>
             <button class="checkout-btn" id="checkoutBtn" disabled>Checkout</button>
         </div>
@@ -114,7 +121,7 @@ while ($row = $result->fetch_assoc()) {
     <div class="content">
         <div class="mobile-header">
             <div class="menu-toggle" id="menuToggle">☰</div>
-            <div class="mobile-logo">MONO</div>
+            <div class="mobile-logo"><?php echo $rowRes["name"] ?></div>
             <div class="mobile-cart" id="mobileCartBtn">
                 🛒
                 <div class="mobile-cart-count" id="mobileCartCount">0</div>
@@ -131,8 +138,7 @@ while ($row = $result->fetch_assoc()) {
 
             <div class="category-header">
                 <h2 class="category-title">Starters</h2>
-                <p class="category-desc">Begin your dining experience with our selection of carefully crafted
-                    starters featuring seasonal ingredients.</p>
+                <p class="category-desc"></p>
             </div>
 
             <div class="menu-grid">
@@ -162,7 +168,7 @@ while ($row = $result->fetch_assoc()) {
             <h3 class=\"food-title\">" . htmlspecialchars($row["product_name"]) ."</h3>
             <p class=\"food-desc\">" . htmlspecialchars($row["description"]) ."</p>
             <div class=\"card-\">
-                <div class=\"price\">$" . htmlspecialchars($row["price"]) ."</div>
+                <div class=\"price\">€" . htmlspecialchars($row["price"]) ."</div>
                 <div class=\"add-btn\">+</div>
             </div>
         </div>
@@ -180,7 +186,7 @@ while ($row = $result->fetch_assoc()) {
     </div>
 </div>
 
-<script src="../../../assets/script/orderDashScript.js"></script>
+<script src="../../../assets/script/orderScript.js"></script>
 </body>
 
 </html>

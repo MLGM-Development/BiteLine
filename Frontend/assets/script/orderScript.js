@@ -134,7 +134,11 @@ const cart = {
     // Get total price
     getTotalPrice() {
         return this.items.reduce((total, item) => {
-            return total + (parseFloat(item.price.replace('$', '')) * item.quantity);
+            // More robust price parsing
+            const priceText = item.price.trim();
+            const priceNumber = priceText.replace(/[^0-9,\.]/g, '')  // Remove all non-numeric characters except comma and dot
+                .replace(',', '.');  // Replace comma with dot for decimal
+            return total + (parseFloat(priceNumber) * item.quantity);
         }, 0);
     },
 
@@ -172,8 +176,8 @@ const cart = {
 
         // Update cart items display
         if (totalItems === 0) {
-            cartItemsContainer.innerHTML = '<div class="cart-empty" id="cartEmpty">Your cart is empty</div>';
-            mobileCartItemsContainer.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
+            cartItemsContainer.innerHTML = '<div class="cart-empty" id="cartEmpty">Carrello vuoto</div>';
+            mobileCartItemsContainer.innerHTML = '<div class="cart-empty">Carrello vuoto</div>';
             checkoutBtn.disabled = true;
             mobileCheckoutBtn.disabled = true;
         } else {
@@ -228,8 +232,8 @@ const cart = {
 
         // Update total price
         const totalPrice = this.getTotalPrice();
-        cartTotal.textContent = `$${totalPrice.toFixed(2)}`;
-        mobileCartTotal.textContent = `$${totalPrice.toFixed(2)}`;
+        cartTotal.textContent = `€${totalPrice.toFixed(2)}`;
+        mobileCartTotal.textContent = `€${totalPrice.toFixed(2)}`;
     },
 
     // Add event listeners to cart item buttons
@@ -382,14 +386,33 @@ function showToast(message) {
 const checkoutBtn = document.getElementById('checkoutBtn');
 const mobileCheckoutBtn = document.getElementById('mobileCheckoutBtn');
 
+function getRestaurantIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('restaurant_id');
+}
+
 checkoutBtn.addEventListener('click', () => {
-    alert('Checkout functionality would go here!');
-    cart.clearCart();
+    // Store cart items in localStorage
+    localStorage.setItem('bitelineCart', JSON.stringify({
+        items: cart.items,
+        totalPrice: cart.getTotalPrice(),
+        restaurantId: getRestaurantIdFromUrl()
+    }));
+
+    // Redirect to checkout page
+    window.location.href = 'checkout.html';
 });
 
 mobileCheckoutBtn.addEventListener('click', () => {
-    alert('Checkout functionality would go here!');
-    cart.clearCart();
+    // Store cart items in localStorage
+    localStorage.setItem('bitelineCart', JSON.stringify({
+        items: cart.items,
+        totalPrice: cart.getTotalPrice(),
+        restaurantId: getRestaurantIdFromUrl()
+    }));
+
+    // Redirect to checkout page
+    window.location.href = 'checkout.html';
     mobileCartOverlay.classList.remove('active');
 });
 

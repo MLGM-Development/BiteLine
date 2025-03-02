@@ -2,9 +2,9 @@
     $mysqli = require __DIR__ . "/../../../../../Backend/Database/connection.php";
     require __DIR__ . '/../../../../../Backend/Controllers/Cookies/JWT_Verifier.php';
 
-    $sql = "SELECT order_id, users.name, users.l_name, order_date, order_time, order_status
+    $sql = "SELECT order_id, users.name, users.l_name, order_date, order_time, status
             FROM orders, users
-            WHERE orders.customer_id = users.user_id
+            WHERE orders.user_id = users.user_id
             ORDER BY order_date DESC;";
 
     $result = $mysqli->query($sql);
@@ -214,9 +214,9 @@ if ($jwtToken) {
                                 while($row = $result->fetch_assoc()) {
                                     echo "<tr>";
                                     echo "<td>" . $row["order_id"] . "</td>";
-                                    echo "<td>" . $row["name"] . $row["l_name"] ."</td>";
-                                    echo "<td>" . $row["date"] . "</td>";
-                                    echo "<td>" . $row["time"] . "</td>";
+                                    echo "<td>" . $row["name"] . " " . $row["l_name"] ."</td>";
+                                    echo "<td>" . $row["order_date"] . "</td>";
+                                    echo "<td>" . $row["order_time"] . "</td>";
                                     echo "<td>" . $row["status"] . "</td>";
                                     echo "</tr>";
                                 }
