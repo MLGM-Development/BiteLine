@@ -1,4 +1,7 @@
 .env
+.idea
+Frontend/assets/media/images/users/menu/*
+Frontend/assets/media/images/restaurants/*
 composer.json
 composer.lock
 struttura_cartelle.txt
