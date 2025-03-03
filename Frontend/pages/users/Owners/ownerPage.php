@@ -4,7 +4,7 @@
     if(isset($_COOKIE['auth_token'])) {
         $session_code = $mysqli->real_escape_string($_COOKIE['auth_token']);
 
-        $verify_query = "SELECT * FROM owners WHERE session_token = ?";
+        $verify_query = "SELECT * FROM owners WHERE session_id = ?";
         $stmt = $mysqli->prepare($verify_query);
         $stmt->bind_param("s", $session_code);
         $stmt->execute();

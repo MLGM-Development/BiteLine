@@ -12,6 +12,10 @@ if ($jwtToken) {
         die('User not authenticated');
     }
 
+    if ($payload['role'] == 'owner'){
+        header('Location: ../../errors/error-403.html');
+    }
+
     $userId = $payload['id'];
 } else {
     header('Location: ../../errors/error-403.html');

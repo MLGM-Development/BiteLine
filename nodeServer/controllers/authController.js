@@ -105,7 +105,7 @@ const login = async (req, res) => {
                 redirectUrl = '/BiteLine/Frontend/pages/users/Owners/dashboard/ownIndexDash.php'
                 break;
             case 'user':
-                redirectUrl = '/BiteLine/Frontend/pages/users/Customers/userPage.html'
+                redirectUrl = '/BiteLine/Frontend/pages/users/Customers/userPage.php'
                 break;
             default:
                 res.status(404).json({error: 'Pagina non trovata'})

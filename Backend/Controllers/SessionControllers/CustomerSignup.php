@@ -50,4 +50,4 @@ $query->bind_param("ssss", $_POST["name"], $_POST["surname"], $_POST["email"], $
 $query->execute();
 $query->close();
 
-header("Location: ../../../Frontend/pages/users/Customers/userPage.html");
+header("Location: ../../../Frontend/pages/users/Customers/userPage.php");
