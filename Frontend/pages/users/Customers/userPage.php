@@ -14,7 +14,7 @@ if ($jwtToken) {
 
     $userId = $payload['id'];
 } else {
-    header('Location: ../../errors/error-500.html');
+    header('Location: ../session/auth-login.html');
 }
 
 $userId = $payload['id'];
