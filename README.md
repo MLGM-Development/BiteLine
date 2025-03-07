@@ -18,7 +18,7 @@ Comando per installare su npm: npm install <nome pacchetto\>
 
 Clonare il repository nella cartella htdocs di XAMPP
 
-    git clone https://github.com/MLGM-Development/DatabaseBiteLine.git
+    git clone https://github.com/MLGM-Development/BiteLine.git
 
 Il percorso dovrebbe assomigliare a questo:
 
@@ -32,21 +32,21 @@ il nome deve essere obbligatoriamente `BiteLine`
 Adattamento di apache per farlo funzionare con Xampp:
 
     <VirtualHost *:80>
-    DocumentRoot "<PERCORSO DELLA TUA CARTELLA DI PROGETTO DENTRO HTDOCS>"
-    ServerName localhost
+        DocumentRoot "<PERCORSO CARTELLA HTDOCS>"
+        ServerName localhost
 
-    <Directory "PERCORSO DELLA TUA CARTELLA HTDOCS">
-        Options Indexes FollowSymLinks Includes ExecCGI
-        AllowOverride All
-        Require all granted
-    </Directory>
+        <Directory "PERCORSO CARTELLA HTDOCS">
+            Options Indexes FollowSymLinks Includes ExecCGI
+            AllowOverride All
+            Require all granted
+        </Directory>
 
-    # Instrada richieste a /node-api verso il server Node.js
-    ProxyPass /node-api http://localhost:3000/node-api
-    ProxyPassReverse /node-api http://localhost:3000/node-api
+        # Instrada richieste a /node-api verso il server Node.js
+        ProxyPass /node-api http://localhost:3000/node-api
+        ProxyPassReverse /node-api http://localhost:3000/node-api
 
-    # Evita di instradare altre richieste PHP a Node.js
-    ProxyPassMatch ^/(.*\.php)$ !
+        # Evita di instradare altre richieste PHP a Node.js
+        ProxyPassMatch ^/(.*\.php)$ !
     </VirtualHost>
 
 Poi occorrerà togliere dai commenti queste linee
@@ -64,7 +64,7 @@ Per configurare il database occorrerà creare un file .env nella cartella nodeSe
     DATABASE_PASSWORD=
     DATABASE_NAME=biteline_db
 
-Andrà craeto anche un file .env nella cartella `Backend/Database/` con il seguente contenuto
+Andrà creato anche un file .env nella cartella `Backend/Database/` con il seguente contenuto
 
     DB_HOST=localhost
     DB_USER=root
@@ -83,15 +83,15 @@ Avviare XAMPP e avviare i servizi Apache e MySQL
 
 ## Inizializzazione del server
 
+Aprire il terminale nella cartella di progetto ed effettuare il comando
+    
+    composer require
+
 Una volta fatto ciò basterà andare sulla cartella nodeServer
 
     cd nodeServer
 
 Effettuare il comando
-
-    npm init -y
-
-Nel caso in cui il precedente comando non funzioni, occorrerà installare npm con il comando
 
     npm install
 
