@@ -102,6 +102,11 @@ while ($row = $result->fetch_assoc()) {
             }
 
         ?>
+
+            <div class="category">
+                <div class="category-icon">◆</div>
+                <div class="category-name"><?php echo "<a href=\"../managing/applyRestaurant.php?restaurant_id=" . $resIdURL . "\">Invia candidatura</a>" ?></div>
+            </div>
         </div>
 
 
