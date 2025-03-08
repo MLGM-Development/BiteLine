@@ -3,6 +3,7 @@
         "vlucas/phpdotenv": "^5.6",
         "google/apiclient": "^2.18",
         "curl/curl": "^2.5",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "phpmailer/phpmailer": "^6.9"
     }
 }
