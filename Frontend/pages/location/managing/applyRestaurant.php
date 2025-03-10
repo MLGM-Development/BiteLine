@@ -16,7 +16,7 @@ if ($jwtToken) {
         header('Location: ../../../errors/error-403.html');
     }
 
-    $ownerId = $payload['id'];
+    $userId = $payload['id'];
 } else {
     header('Location: ../../session/auth-login.html');
 }
@@ -92,9 +92,139 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../../assets/css/formStyle.css">
     <title>Invia candidatura | BiteLine</title>
 </head>
 <body>
+<div class="mega-container">
+    <!-- Animated background -->
+    <div class="animated-background">
+        <div class="animated-blob blob-1"></div>
+        <div class="animated-blob blob-2"></div>
+        <div class="animated-blob blob-3"></div>
+    </div>
 
+    <!-- Success message -->
+    <div class="success-message" id="successMessage">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <div>
+            <strong>Messaggio inviato con successo</strong>
+            <p>Ti ricontatteremo presto.</p>
+        </div>
+    </div>
+
+    <div class="container">
+
+
+        <div class="contact-section glass-morphism">
+            <div class="glow2"></div>
+            <div class="grid-dots"></div>
+            <div class="section-content">
+                <span class="badge fade-in-up">invio</span>
+                <h1 class="fade-in-up">Candidature</h1>
+                <p class="fade-in-up stagger-delay-1">Inserisci i dati richiesti relativi alla tua vita professionale</p>
+
+                <form class="contact-form fade-in-up stagger-delay-2" id="contactForm" enctype="multipart/form-data" action="" method="post">
+
+                    <div class="form-group image-upload-container">
+                        <div id="imageUploadArea" class="image-upload-area" tabindex="0">
+                            <input type="file" id="imageUpload" accept="image/*" class="file-input" name="image" hidden required>
+                            <div id="uploadPlaceholder" class="upload-placeholder">
+                                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <p>Trascina qui il tuo curriculum</p>
+                                <span>Formati supportati: JPG, PNG, GIF, PDF, DOC, DOCX</span>
+                            </div>
+                            <div id="imagePreview" class="image-preview" style="display: none;">
+                                <img id="previewImg" src="" alt="Preview">
+                                <button id="removeImage" class="remove-image" type="button">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <label for="imageUpload">Curriculum</label>
+                    </div>
+                    <?php
+                    $sql = "SELECT * FROM users WHERE user_id = ?";
+                    $stmt = $mysqli->prepare($sql);
+                    $stmt->bind_param("i", $payload['id']);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    echo "<div class=\"form-row\">
+                        <div class=\"form-group\">
+                            <input type=\"text\" id=\"name\" placeholder=\" \" name=\"name\" value=\"".$row['name']."\" required>
+                            <label for=\"name\">Nome</label>
+                        </div>
+                        <div class=\"form-group\">
+                            <input type=\"text\" id=\"surname\" placeholder=\" \" name=\"surname\" value=\"".$row['l_name']."\" required>
+                            <label for=\"surname\">Cognome</label>
+                        </div>
+                    </div>
+                    <div class=\"form-group\">
+                            <input type=\"email\" id=\"email\" placeholder=\" \" name=\"resMail\" value=\"".$row['email']."\"required>
+                            <label for=\"email\">Email</label>
+                        </div>
+                        
+                        ";
+
+                    ?>
+
+                    <div class="form-group">
+                        <select id="cuisine" name="cuisine" required>
+                            <option value="italiana">Italiana</option>
+                            <option value="francese">Francese</option>
+                            <option value="spagnola">Spagnola</option>
+                            <option value="giapponese">Giapponese</option>
+                            <option value="cinese">Cinese</option>
+                            <option value="thailandese">Thailandese</option>
+                            <option value="indiana">Indiana</option>
+                            <option value="messicana">Messicana</option>
+                            <option value="greca">Greca</option>
+                            <option value="mediorientale">Mediorientale</option>
+                            <option value="africana">Africana</option>
+                            <option value="americana">Americana</option>
+                            <option value="brasiliana">Brasiliana</option>
+                            <option value="argentina">Argentina</option>
+                            <option value="coreana">Coreana</option>
+                            <option value="vietnamita">Vietnamita</option>
+                            <option value="tedesca">Tedesca</option>
+                            <option value="vegana">Vegana</option>
+                            <option value="vegetariana">Vegetariana</option>
+                            <option value="pescetariana">Pescetariana</option>
+                            <option value="fusion">Fusion</option>
+                            <option value="street-food">Street Food</option>
+                        </select>
+                        <label for="cuisine">Cucina</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" id="phone" placeholder=" " name="resPhone" required>
+                        <label for="phone">N. Telefono</label>
+                    </div>
+
+                    <div class="form-group">
+                        <textarea id="message" placeholder=" " required maxlength="255" name="description"></textarea>
+                        <label for="message">Breve descrizione (max 255 caratteri)</label>
+                    </div>
+
+                    <button type="submit">Invia</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../../../assets/script/FormScript.js"></script>
 </body>
 </html>
