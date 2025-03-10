@@ -131,7 +131,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                     <div class="form-group image-upload-container">
                         <div id="imageUploadArea" class="image-upload-area" tabindex="0">
-                            <input type="file" id="imageUpload" accept="image/*" class="file-input" name="image" hidden required>
+                            <input type="file" id="imageUpload" accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx" class="file-input" name="image" hidden required>
                             <div id="uploadPlaceholder" class="upload-placeholder">
                                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -182,40 +182,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                     <div class="form-group">
                         <select id="cuisine" name="cuisine" required>
-                            <option value="italiana">Italiana</option>
-                            <option value="francese">Francese</option>
-                            <option value="spagnola">Spagnola</option>
-                            <option value="giapponese">Giapponese</option>
-                            <option value="cinese">Cinese</option>
-                            <option value="thailandese">Thailandese</option>
-                            <option value="indiana">Indiana</option>
-                            <option value="messicana">Messicana</option>
-                            <option value="greca">Greca</option>
-                            <option value="mediorientale">Mediorientale</option>
-                            <option value="africana">Africana</option>
-                            <option value="americana">Americana</option>
-                            <option value="brasiliana">Brasiliana</option>
-                            <option value="argentina">Argentina</option>
-                            <option value="coreana">Coreana</option>
-                            <option value="vietnamita">Vietnamita</option>
-                            <option value="tedesca">Tedesca</option>
-                            <option value="vegana">Vegana</option>
-                            <option value="vegetariana">Vegetariana</option>
-                            <option value="pescetariana">Pescetariana</option>
-                            <option value="fusion">Fusion</option>
-                            <option value="street-food">Street Food</option>
+                            <option value="cuoco">Cuoco</option>
+                            <option value="aiuto_cuoco">Aiuto cuoco</option>
+                            <option value="cameriere">Cameriere</option>
                         </select>
-                        <label for="cuisine">Cucina</label>
+                        <label for="cuisine">Posizione lavorativa</label>
                     </div>
 
                     <div class="form-group">
                         <input type="text" id="phone" placeholder=" " name="resPhone" required>
                         <label for="phone">N. Telefono</label>
-                    </div>
-
-                    <div class="form-group">
-                        <textarea id="message" placeholder=" " required maxlength="255" name="description"></textarea>
-                        <label for="message">Breve descrizione (max 255 caratteri)</label>
                     </div>
 
                     <button type="submit">Invia</button>
