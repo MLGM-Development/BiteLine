@@ -22,15 +22,11 @@ if ($jwtToken) {
 }
 
 $uploadDir = __DIR__ . '/../../../assets/documents/applications/';
+$restaurantId = $_GET['restaurant_id'];
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $restaurantName = $_POST["resName"];
-    $description = $_POST["description"];
-    $address = $_POST["address"];
-    $email = $_POST["resMail"];
-    $phone = $_POST["resPhone"];
-    $cuisine = $_POST["cuisine"];
+    $role = $_POST["role"];
 
     // Verifica che la cartella esista, altrimenti creala
     if (!is_dir($uploadDir)) {
@@ -50,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if (in_array($fileExtension, $allowedTypes)) {
             // Genera un nome sicuro per il file
-            $safeRestaurantName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $restaurantName);
+            $safeRestaurantName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $restaurantId);
             $newFileName = $safeRestaurantName . '_' . time() . '.' . $fileExtension;
             $targetFilePath = $uploadDir . $newFileName;
 
@@ -65,18 +61,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     // Inserisci i dati nel database
-    $sql = "INSERT INTO restaurants (image, name, description, address, email, phone_number, cuisine, owner) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO employees_history (cv_path, employee_id, restaurant_id, role) 
+            VALUES (?, ?, ?, ?)";
     $stmt = $mysqli->prepare($sql);
 
     if (!$stmt) {
         die("Errore nella preparazione della query: " . $mysqli->error);
     }
 
-    $stmt->bind_param("sssssssi", $imagePath, $restaurantName, $description, $address, $email, $phone, $cuisine, $payload['id']);
+    $stmt->bind_param("siis", $imagePath, $payload['id'], $restaurantId, $role);
 
     if ($stmt->execute()) {
-        header("Location: ../../users/Owners/dashboard/ownIndexDash.php");
+        header("Location: ../../users/Customers/dataConfirmation.html");
         exit();
     } else {
         die("Errore nell'inserimento nel database: " . $stmt->error);
@@ -92,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="../../../assets/css/formStyle.css">
+    <link rel="stylesheet" href="../../../assets/css/FormStyle.css">
     <title>Invia candidatura | BiteLine</title>
 </head>
 <body>
@@ -172,7 +168,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         </div>
                     </div>
                     <div class=\"form-group\">
-                            <input type=\"email\" id=\"email\" placeholder=\" \" name=\"resMail\" value=\"".$row['email']."\"required>
+                            <input type=\"email\" id=\"email\" placeholder=\" \" name=\"resMail\" value=\"".$row['email']."\" required>
                             <label for=\"email\">Email</label>
                         </div>
                         
@@ -181,12 +177,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     ?>
 
                     <div class="form-group">
-                        <select id="cuisine" name="cuisine" required>
+                        <select id="role" name="role" required>
                             <option value="cuoco">Cuoco</option>
                             <option value="aiuto_cuoco">Aiuto cuoco</option>
                             <option value="cameriere">Cameriere</option>
                         </select>
-                        <label for="cuisine">Posizione lavorativa</label>
+                        <label for="role">Posizione lavorativa</label>
                     </div>
 
                     <div class="form-group">
@@ -201,6 +197,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </div>
 </div>
 
-<script src="../../../assets/script/FormScript.js"></script>
+<script src="../../../assets/script/formScript.js"></script>
 </body>
 </html>

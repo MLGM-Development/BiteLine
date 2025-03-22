@@ -49,7 +49,6 @@ function renderRestaurants() {
                         <p class="card-description">${restaurant.description}</p>
                         <div class="card-footer">
                             <span class="cuisine">${restaurant.cuisine}</span>
-                            <span class="delivery-time">DA IMPOSTARE</span>
                         </div>
                     </div>
                 `;

@@ -1,0 +1,206 @@
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --success: #10b981;
+    --background: #111827;
+    --card-bg: #1f2937;
+    --card-secondary: #374151;
+    --text: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --border: #4b5563;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.confirmation-card {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 500px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+}
+
+.header {
+    background-color: #2e1065;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+    background-image: linear-gradient(to right, #2e1065, #1e40af);
+}
+
+.success-icon {
+    background-color: var(--success);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: 0 10px 15px rgba(16, 185, 129, 0.3);
+}
+
+.checkmark {
+    stroke-dasharray: 180;
+    stroke-dashoffset: 180;
+    stroke: white;
+    transform: translateY(3px);
+    animation: draw 0.7s ease-in-out forwards 0.3s;
+}
+
+@keyframes draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.content {
+    padding: 2rem;
+    text-align: center;
+}
+
+h1 {
+    color: white;
+    font-size: 1.5rem;
+    margin-top: 1.5rem;
+    font-weight: 600;
+}
+
+.message {
+    margin: 1rem 0 2rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.details {
+    background-color: var(--card-secondary);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.details-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.details-row:last-child {
+    margin-bottom: 0;
+}
+
+.details-title {
+    color: var(--text-secondary);
+}
+
+.details-value {
+    font-weight: 500;
+    color: var(--text);
+}
+
+.btn {
+    display: inline-block;
+    background-color: var(--primary);
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+}
+
+.accent-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #8b5cf6, #10b981);
+}
+
+.glow {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, rgba(99, 102, 241, 0) 70%);
+    top: -100px;
+    right: -50px;
+    z-index: 0;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    opacity: 0;
+}
+
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(60px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .confirmation-card {
+        border-radius: 0.75rem;
+    }
+
+    .header {
+        padding: 1.5rem;
+    }
+
+    .success-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .content {
+        padding: 1.5rem;
+    }
+
+    h1 {
+        font-size: 1.25rem;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}

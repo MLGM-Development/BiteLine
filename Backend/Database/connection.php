@@ -10,7 +10,7 @@ $dotenv->load();
 $mysqli = new mysqli(
     $_ENV["DATABASE_HOSTNAME"],
     $_ENV["DATABASE_USERNAME"],
-    "root",
+    "",
     $_ENV["DATABASE_NAME"]
 );
 

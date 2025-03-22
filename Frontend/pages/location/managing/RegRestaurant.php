@@ -91,7 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <link rel="stylesheet" href="../../../assets/css/formStyle.css">
+    <link rel="stylesheet" href="../../../assets/css/FormStyle.css">
     <title>Registrazione Ristorante | BiteLine</title>
 </head>
 <body>
@@ -215,7 +215,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </div>
 </div>
 
-<script src="../../../assets/script/FormScript.js"></script>
+<script src="../../../assets/script/formScript.js"></script>
 
 </body>
 </html>
