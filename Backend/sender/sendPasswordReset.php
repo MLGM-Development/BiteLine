@@ -145,7 +145,7 @@ if($stmt->affected_rows){
       <h1>Reimposta la tua password</h1>
       <p>Abbiamo ricevuto una richiesta di reset della tua password di BiteLine. Usa il pulsante sottostante per creare una nuova password, il link è valido per soli 30 minuti.</p>
       
-      <a href="https://localhost/BiteLine/Frontend/pages/users/session/resetPassword.php?token=$token" class="btn">Resetta Password</a>
+      <a href="http://localhost/BiteLine/Frontend/pages/users/session/resetPassword.php?token=$token" class="btn">Resetta Password</a>
       
       <p>Se non hai richiesto tu questo reset, puoi tranquillamente ignorare questa mail</p>
       
@@ -162,6 +162,7 @@ END;
 
     try {
         $mail->send();
+        header("location: ../../Frontend/pages/users/session/resetPasswordConfirm.html");
     }catch (Exception $e) {
         echo "Errore nell'invio della mail: {$mail->ErrorInfo}";
     }

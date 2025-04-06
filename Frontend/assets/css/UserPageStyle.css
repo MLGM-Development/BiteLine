@@ -301,3 +301,31 @@ body {
     padding: 6px 12px;
     border-radius: 20px;
 }
+
+.logout-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+#lobtn {
+    background: linear-gradient(135deg, #e63946, #d00000);
+    color: var(--text-color);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 12px 28px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+}
+
+#lobtn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(229, 57, 70, 0.4);
+}
+
+#lobtn:active {
+    transform: translateY(1px);
+}

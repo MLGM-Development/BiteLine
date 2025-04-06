@@ -44,7 +44,7 @@ $userData = $result->fetch_assoc();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../../assets/css/universal/reset.css">
-    <link rel="stylesheet" href="../../../assets/css/userPageStyle.css">
+    <link rel="stylesheet" href="../../../assets/css/UserPageStyle.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
@@ -58,6 +58,10 @@ $userData = $result->fetch_assoc();
     <div class="profile-header">
         <h1 class="profile-title">Profilo Utente</h1>
         <p class="profile-subtitle">Visualizza le tue informazioni</p>
+    </div>
+
+    <div class="logout-wrapper">
+        <button id="lobtn">Logout</button>
     </div>
 
     <div class="profile-grid">
@@ -334,7 +338,6 @@ $userData = $result->fetch_assoc();
 
 <footer id="footer"></footer>
 
-<button id="lobtn">Logout</button>
 <script src="../../../assets/script/logout.js"></script>
 <script src="../../../routes/componentLoader.js"></script>
 

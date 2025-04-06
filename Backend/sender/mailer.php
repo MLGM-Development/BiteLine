@@ -16,7 +16,7 @@ $mail->Host = 'smtp.gmail.com';
 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
 $mail->Port = 587;
 $mail->Username = 'bitelineservices@gmail.com';
-$mail->Password = $_ENV['MAIL_PASSWORD'];
+$mail->Password = 'yrsp vvcy nqju zrbd';
 
 $mail->isHTML(true);
 
