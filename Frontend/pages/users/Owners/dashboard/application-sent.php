@@ -4,8 +4,6 @@
 
 
 
-
-
 $jwtToken = getJwtToken();
 
 if ($jwtToken) {
@@ -33,11 +31,7 @@ $result = $stmt->get_result();
 $row = $result->fetch_assoc();
 $restaurantId = $row['restaurant_id'];
 
-$sql = "SELECT order_id, users.name, users.l_name, order_date, order_time, status
-            FROM orders, users
-            WHERE orders.user_id = users.user_id
-            AND restaurant_id = ?
-            ORDER BY order_date DESC;";
+$sql = "SELECT * FROM employees_history, users WHERE restaurant_id = ? AND employees_history.employee_id = users.user_id AND employees_history.start_date IS NULL";
 $stmt = $mysqli->prepare($sql);
 $stmt->bind_param("i", $restaurantId);
 $stmt->execute();
@@ -56,11 +50,16 @@ $result = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ordini | BiteLine</title>
 
+
+
     <link rel="shortcut icon" href="../../../../assets/media/images/favicon/favicon.png" type="image/x-icon">
-    <link rel="stylesheet" href="../../../../assets/bootstrap/extensions/simple-datatables/style.css">
-    <link rel="stylesheet" href="../../../../assets/bootstrap/compiled/css/table-datatable.css">
-    <link rel="stylesheet" href="../../../../assets/bootstrap/compiled/css/app.css">
-    <link rel="stylesheet" href="../../../../assets/bootstrap/compiled/css/app-dark.css">
+    
+<link rel="stylesheet" href="../../../../assets/bootstrap/extensions/simple-datatables/style.css">
+
+
+  <link rel="stylesheet" href="../../../../assets/bootstrap/compiled/css/table-datatable.css">
+  <link rel="stylesheet" href="../../../../assets/bootstrap/compiled/css/app.css">
+  <link rel="stylesheet" href="../../../../assets/bootstrap/compiled/css/app-dark.css">
 </head>
 
 <body>
@@ -121,7 +120,7 @@ $result = $stmt->get_result();
             </li>
 
             <li
-                    class="sidebar-item active ">
+                    class="sidebar-item">
                 <a href="table-datatable.php" class='sidebar-link'>
                     <i class="bi bi-file-earmark-spreadsheet-fill"></i>
                     <span>Ordini</span>
@@ -154,7 +153,7 @@ $result = $stmt->get_result();
             </li>
 
             <li
-                    class="sidebar-item  ">
+                    class="sidebar-item active ">
                 <a href="application-sent.php" class='sidebar-link'>
                     <i class="bi bi-person-plus-fill"></i>
                     <span>Candidature</span>
@@ -187,14 +186,14 @@ $result = $stmt->get_result();
     <div class="page-title">
         <div class="row">
             <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Ordini</h3>
-                <p class="text-subtitle text-muted">Qua potrai visualizzare tutti gli ordini effettuati nel tuo risorante</p>
+                <h3>Candidature</h3>
+                <p class="text-subtitle text-muted">Qua potrai visualizzare tutte le candidature inviate per il tuo ristorante</p>
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="ownIndexDash.php">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Ordini</li>
+                        <li class="breadcrumb-item active" aria-current="page">Candidature</li>
                     </ol>
                 </nav>
             </div>
@@ -204,17 +203,16 @@ $result = $stmt->get_result();
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">
-                    Tutti gli ordini
+                    Tutti le candidature
                 </h5>
             </div>
             <div class="card-body">
                 <table class="table table-striped" id="table1">
                     <thead>
                         <tr>
-                            <th>Numero Ordine</th>
-                            <th>Cliente</th>
-                            <th>Data</th>
-                            <th>Ora</th>
+                            <th>Candidato</th>
+                            <th>Ruolo desiderato</th>
+                            <th>Curriculum</th>
                             <th>Stato</th>
                         </tr>
                     </thead>
@@ -223,16 +221,22 @@ $result = $stmt->get_result();
                             if($result->num_rows > 0) {
                                 while($row = $result->fetch_assoc()) {
                                     echo "<tr>";
-                                    echo "<td>" . $row["order_id"] . "</td>";
                                     echo "<td>" . $row["name"] . " " . $row["l_name"] ."</td>";
-                                    echo "<td>" . $row["order_date"] . "</td>";
-                                    echo "<td>" . $row["order_time"] . "</td>";
-                                    echo "<td>" . $row["status"] . "</td>";
+                                    echo "<td>" . $row["role"] . "</td>";
+                                    echo "<td><a href='../../../../assets/documents/applications/" . $row["cv_path"] . "' class='btn btn-primary btn-sm' download><i class='bi bi-download'></i> Scarica CV</a></td>";
+                                    echo "
+                                            <td>
+                                                <form action=\"../../../../../Backend/dbInserter/hire.php\" method=\"POST\">
+                                                    <input type=\"hidden\" name=\"hire\" value=\"hire\">
+                                                    <input type=\"hidden\" name=\"person\" value=\"" . $row["employee_id"] . "\">
+                                                    <input type=\"submit\" value=\"Assumi\" class=\"btn btn-success btn-sm\">
+                                                </form>
+                                            </td>";
                                     echo "</tr>";
                                 }
                             } else {
                                 echo "<tr>";
-                                echo "<td colspan='5'>Non hai alcun ordine</td>";
+                                echo "<td colspan='5'>Non hai alcuna candidatura</td>";
                                 echo "</tr>";
                             }
                         ?>
@@ -244,26 +248,22 @@ $result = $stmt->get_result();
     </section>
 </div>
 
-            <footer>
+<footer>
     <div class="footer clearfix mb-0 text-muted">
         <div class="float-start">
             <p>2025 &copy; BiteLine</p>
         </div>
     </div>
 </footer>
-        </div>
-    </div>
-    <script src="../../../../assets/bootstrap/static/js/components/dark.js"></script>
-    <script src="../../../../assets/bootstrap/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    
-    
-    <script src="../../../../assets/bootstrap/compiled/js/app.js"></script>
-    
 
-    
+</div>
+</div>
+
+<script src="../../../../assets/bootstrap/static/js/components/dark.js"></script>
+<script src="../../../../assets/bootstrap/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+<script src="../../../../assets/bootstrap/compiled/js/app.js"></script>
 <script src="../../../../assets/bootstrap/extensions/simple-datatables/umd/simple-datatables.js"></script>
 <script src="../../../../assets/bootstrap/static/js/pages/simple-datatables.js"></script>
 
 </body>
-
 </html>

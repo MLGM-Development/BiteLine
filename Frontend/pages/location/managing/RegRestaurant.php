@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
+    <link rel="shortcut icon" href="../../../assets/media/images/favicon/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="../../../assets/css/FormStyle.css">
     <title>Registrazione Ristorante | BiteLine</title>
 </head>

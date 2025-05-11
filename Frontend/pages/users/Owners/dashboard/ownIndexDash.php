@@ -39,14 +39,14 @@ $result = $stmt->get_result();
 
 if($result->num_rows > 0) {
     $row = $result->fetch_assoc();
-    $empNumb = "SELECT COUNT(*) FROM employees_history WHERE restaurant_id = ?";
+    $empNumb = "SELECT COUNT(*) FROM employees_history WHERE restaurant_id = ? AND start_date IS NOT NULL";
     $stmtempNumb = $mysqli->prepare($empNumb);
     $stmtempNumb->bind_param("i", $row["restaurant_id"]);
     $stmtempNumb->execute();
     $resultEmp = $stmtempNumb->get_result();
     $rowEmp = $resultEmp->fetch_assoc();
 
-    $numOrder = "SELECT COUNT(users.user_id) FROM orders, users WHERE restaurant_id = ? AND orders.user_id = users.user_id";
+    $numOrder = "SELECT COUNT(DISTINCT user_id) as Conto FROM orders WHERE restaurant_id = ?";
     $stmtNumOrder = $mysqli->prepare($numOrder);
     $stmtNumOrder->bind_param("i", $row["restaurant_id"]);
     $stmtNumOrder->execute();
@@ -60,17 +60,31 @@ if($result->num_rows > 0) {
     $resultNumClient = $stmtNumClient->get_result();
     $rowNumClient = $resultNumClient->fetch_assoc();
 
-    $top3product = "SELECT products.product_id, name, COUNT(order_items.product_id) as num FROM order_items, products WHERE products.product_id = order_items.product_id GROUP BY product_id, name ORDER BY num DESC LIMIT 3";
-    $stmtTop3product = $mysqli->prepare($top3product);
-    $stmtTop3product->execute();
-    $resultTop3product = $stmtTop3product->get_result();
-    $rowTop3product = $resultTop3product->fetch_assoc();
+    $topOrders = "SELECT * FROM orders, users WHERE restaurant_id = ? AND orders.user_id = users.user_id ORDER BY order_date DESC LIMIT 3";
+    $stmtTopOrders = $mysqli->prepare($topOrders);
+    $stmtTopOrders->bind_param("i", $row["restaurant_id"]);
+    $stmtTopOrders->execute();
+    $resultTopOrders = $stmtTopOrders->get_result();
 
-    $topProduct = [];
+    $lastApply = "SELECT * FROM employees_history, users WHERE employee_id = user_id AND restaurant_id = ? AND start_date IS NULL LIMIT 3";
+    $stmtLastApply = $mysqli->prepare($lastApply);
+    $stmtLastApply->bind_param("i", $row["restaurant_id"]);
+    $stmtLastApply->execute();
+    $resultLastApply = $stmtLastApply->get_result();
 
-    while($rowTop3product = $resultTop3product->fetch_assoc()){
-        $topProduct[] = $rowTop3product;
+    $graphDataRetriever = "SELECT DATE_FORMAT(order_date, '%Y-%m') AS month, COUNT(*) AS orders_count FROM orders GROUP BY month ORDER BY month";
+    $stmtGraphData = $mysqli->prepare($graphDataRetriever);
+    $stmtGraphData->execute();
+    $resultGraphData = $stmtGraphData->get_result();
+    $data=[];
+    $labels=[];
+    while ($row = $resultGraphData->fetch_assoc()) {
+        $graphData[] = [
+            $labels[] = $row['month'],
+            $data[] = $row['orders_count']
+        ];
     }
+
 }else{
     header('Location: ../../../location/managing/RegRestaurant.php');
 }
@@ -85,13 +99,8 @@ if($result->num_rows > 0) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Area amministrazione | BiteLine</title>
-    
-    
-    
-    <link rel="shortcut icon" href="../../../../assets/bootstrap/compiled/svg/favicon.svg" type="image/x-icon">
-    <link rel="shortcut icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAiCAYAAADRcLDBAAAEs2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS41LjAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6ZXhpZj0iaHR0cDovL25zLmFkb2JlLmNvbS9leGlmLzEuMC8iCiAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIKICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIKICAgIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIgogICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgZXhpZjpQaXhlbFhEaW1lbnNpb249IjMzIgogICBleGlmOlBpeGVsWURpbWVuc2lvbj0iMzQiCiAgIGV4aWY6Q29sb3JTcGFjZT0iMSIKICAgdGlmZjpJbWFnZVdpZHRoPSIzMyIKICAgdGlmZjpJbWFnZUxlbmd0aD0iMzQiCiAgIHRpZmY6UmVzb2x1dGlvblVuaXQ9IjIiCiAgIHRpZmY6WFJlc29sdXRpb249Ijk2LjAiCiAgIHRpZmY6WVJlc29sdXRpb249Ijk2LjAiCiAgIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiCiAgIHBob3Rvc2hvcDpJQ0NQcm9maWxlPSJzUkdCIElFQzYxOTY2LTIuMSIKICAgeG1wOk1vZGlmeURhdGU9IjIwMjItMDMtMzFUMTA6NTA6MjMrMDI6MDAiCiAgIHhtcDpNZXRhZGF0YURhdGU9IjIwMjItMDMtMzFUMTA6NTA6MjMrMDI6MDAiPgogICA8eG1wTU06SGlzdG9yeT4KICAgIDxyZGY6U2VxPgogICAgIDxyZGY6bGkKICAgICAgc3RFdnQ6YWN0aW9uPSJwcm9kdWNlZCIKICAgICAgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWZmaW5pdHkgRGVzaWduZXIgMS4xMC4xIgogICAgICBzdEV2dDp3aGVuPSIyMDIyLTAzLTMxVDEwOjUwOjIzKzAyOjAwIi8+CiAgICA8L3JkZjpTZXE+CiAgIDwveG1wTU06SGlzdG9yeT4KICA8L3JkZjpEZXNjcmlwdGlvbj4KIDwvcmRmOlJERj4KPC94OnhtcG1ldGE+Cjw/eHBhY2tldCBlbmQ9InIiPz5V57uAAAABgmlDQ1BzUkdCIElFQzYxOTY2LTIuMQAAKJF1kc8rRFEUxz9maORHo1hYKC9hISNGTWwsRn4VFmOUX5uZZ36oeTOv954kW2WrKLHxa8FfwFZZK0WkZClrYoOe87ypmWTO7dzzud97z+nec8ETzaiaWd4NWtYyIiNhZWZ2TvE946WZSjqoj6mmPjE1HKWkfdxR5sSbgFOr9Ll/rXoxYapQVik8oOqGJTwqPL5i6Q5vCzeo6dii8KlwpyEXFL519LjLLw6nXP5y2IhGBsFTJ6ykijhexGra0ITl5bRqmWU1fx/nJTWJ7PSUxBbxJkwijBBGYYwhBgnRQ7/MIQIE6ZIVJfK7f/MnyUmuKrPOKgZLpEhj0SnqslRPSEyKnpCRYdXp/9++msneoFu9JgwVT7b91ga+LfjetO3PQ9v+PgLvI1xkC/m5A+h7F32zoLXug38dzi4LWnwHzjeg8UGPGbFfySvuSSbh9QRqZ6H+Gqrm3Z7l9zm+h+iafNUV7O5Bu5z3L/wAdthn7QIme0YAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAJTSURBVFiF7Zi9axRBGIefEw2IdxFBRQsLWUTBaywSK4ubdSGVIY1Y6HZql8ZKCGIqwX/AYLmCgVQKfiDn7jZeEQMWfsSAHAiKqPiB5mIgELWYOW5vzc3O7niHhT/YZvY37/swM/vOzJbIqVq9uQ04CYwCI8AhYAlYAB4Dc7HnrOSJWcoJcBS4ARzQ2F4BZ2LPmTeNuykHwEWgkQGAet9QfiMZjUSt3hwD7psGTWgs9pwH1hC1enMYeA7sKwDxBqjGnvNdZzKZjqmCAKh+U1kmEwi3IEBbIsugnY5avTkEtIAtFhBrQCX2nLVehqyRqFoCAAwBh3WGLAhbgCRIYYinwLolwLqKUwwi9pxV4KUlxKKKUwxC6ZElRCPLYAJxGfhSEOCz6m8HEXvOB2CyIMSk6m8HoXQTmMkJcA2YNTHm3congOvATo3tE3A29pxbpnFzQSiQPcB55IFmFNgFfEQeahaAGZMpsIJIAZWAHcDX2HN+2cT6r39GxmvC9aPNwH5gO1BOPFuBVWAZue0vA9+A12EgjPadnhCuH1WAE8ivYAQ4ohKaagV4gvxi5oG7YSA2vApsCOH60WngKrA3R9IsvQUuhIGY00K4flQG7gHH/mLytB4C42EgfrQb0mV7us8AAMeBS8mGNMR4nwHamtBB7B4QRNdaS0M8GxDEog7iyoAguvJ0QYSBuAOcAt71Kfl7wA8DcTvZ2KtOlJEr+ByyQtqqhTyHTIeB+ONeqi3brh+VgIN0fohUgWGggizZFTplu12yW8iy/YLOGWMpDMTPXnl+Az9vj2HERYqPAAAAAElFTkSuQmCC" type="image/png">
-    
 
+    <link rel="shortcut icon" href="../../../../assets/media/images/favicon/favicon.png" type="image/x-icon">
 
   <link rel="stylesheet" href="../../../../assets/bootstrap/compiled/css/app.css">
   <link rel="stylesheet" href="../../../../assets/bootstrap/compiled/css/app-dark.css">
@@ -107,7 +116,7 @@ if($result->num_rows > 0) {
     <div class="sidebar-header position-relative">
         <div class="d-flex justify-content-between align-items-center">
             <div class="logo">
-                <a href="ownIndexDash.php"><img src="../../../../assets/bootstrap/compiled/svg/LogoBiteLine.png" alt="Logo" srcset=""></a>
+                <a href="../../../index.html"><img src="../../../../assets/bootstrap/compiled/svg/LogoBiteLine.png" alt="Logo" srcset=""></a>
             </div>
             <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
@@ -191,9 +200,9 @@ if($result->num_rows > 0) {
 
             <li
                     class="sidebar-item  ">
-                <a href="application-email.html" class='sidebar-link'>
-                    <i class="bi bi-envelope-fill"></i>
-                    <span>Recensioni</span>
+                <a href="application-sent.php" class='sidebar-link'>
+                    <i class="bi bi-person-plus-fill"></i>
+                    <span>Candidature</span>
                 </a>
 
 
@@ -201,637 +210,14 @@ if($result->num_rows > 0) {
 
             <li
                     class="sidebar-item">
-                <a href="ownIndexDash.php" class='sidebar-link'>
-                    <i class="bi bi-grid-fill"></i>
-                    <span>Promozioni</span>
+                <a href="employees.php" class='sidebar-link'>
+                    <i class="bi bi-people-fill"></i>
+                    <span>Dipendenti</span>
                 </a>
 
 
             </li>
-            
-            <li
-                class="sidebar-item  has-sub">
-                <a href="#" class='sidebar-link'>
-                    <i class="bi bi-stack"></i>
-                    <span>Components</span>
-                </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-accordion.html" class="submenu-link">Accordion</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-alert.html" class="submenu-link">Alert</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-badge.html" class="submenu-link">Badge</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-breadcrumb.html" class="submenu-link">Breadcrumb</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-button.html" class="submenu-link">Button</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-card.html" class="submenu-link">Card</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-carousel.html" class="submenu-link">Carousel</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-collapse.html" class="submenu-link">Collapse</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-dropdown.html" class="submenu-link">Dropdown</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-list-group.html" class="submenu-link">List Group</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-modal.html" class="submenu-link">Modal</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-navs.html" class="submenu-link">Navs</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-pagination.html" class="submenu-link">Pagination</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-progress.html" class="submenu-link">Progress</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-spinner.html" class="submenu-link">Spinner</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-toasts.html" class="submenu-link">Toasts</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/component-tooltip.html" class="submenu-link">Tooltip</a>
-                        
-                    </li>
-                    
-                </ul>
-                
 
-            </li>
-            
-            <li
-                class="sidebar-item  has-sub">
-                <a href="#" class='sidebar-link'>
-                    <i class="bi bi-collection-fill"></i>
-                    <span>Extra Components</span>
-                </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/extra-component-avatar.html" class="submenu-link">Avatar</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/extra-component-divider.html" class="submenu-link">Divider</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/extra-component-date-picker.html" class="submenu-link">Date Picker</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/extra-component-sweetalert.html" class="submenu-link">Sweet Alert</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/extra-component-toastify.html" class="submenu-link">Toastify</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/extra-component-rating.html" class="submenu-link">Rating</a>
-                        
-                    </li>
-                    
-                </ul>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  has-sub">
-                <a href="#" class='sidebar-link'>
-                    <i class="bi bi-grid-1x2-fill"></i>
-                    <span>Layouts</span>
-                </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/layout-default.html" class="submenu-link">Default Layout</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/layout-vertical-1-column.html" class="submenu-link">1 Column</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/layout-vertical-navbar.html" class="submenu-link">Vertical Navbar</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/layout-rtl.html" class="submenu-link">RTL Layout</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/layout-horizontal.html" class="submenu-link">Horizontal Menu</a>
-                        
-                    </li>
-                    
-                </ul>
-                
-
-            </li>
-            
-            <li class="sidebar-title">Forms &amp; Tables</li>
-            
-            <li
-                class="sidebar-item  has-sub">
-                <a href="#" class='sidebar-link'>
-                    <i class="bi bi-hexagon-fill"></i>
-                    <span>Form Elements</span>
-                </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/form-element-input.html" class="submenu-link">Input</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/form-element-input-group.html" class="submenu-link">Input Group</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/form-element-select.html" class="submenu-link">Select</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/form-element-radio.html" class="submenu-link">Radio</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/form-element-checkbox.html" class="submenu-link">Checkbox</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/form-element-textarea.html" class="submenu-link">Textarea</a>
-                        
-                    </li>
-                    
-                </ul>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  ">
-                <a href="../../../../../dash/form-layout.html" class='sidebar-link'>
-                    <i class="bi bi-file-earmark-medical-fill"></i>
-                    <span>Form Layout</span>
-                </a>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  has-sub">
-                <a href="#" class='sidebar-link'>
-                    <i class="bi bi-journal-check"></i>
-                    <span>Form Validation</span>
-                </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/form-validation-parsley.html" class="submenu-link">Parsley</a>
-                        
-                    </li>
-                    
-                </ul>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  has-sub">
-                <a href="#" class='sidebar-link'>
-                    <i class="bi bi-pen-fill"></i>
-                    <span>Form Editor</span>
-                </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/form-editor-quill.html" class="submenu-link">Quill</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/form-editor-ckeditor.html" class="submenu-link">CKEditor</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/form-editor-summernote.html" class="submenu-link">Summernote</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/form-editor-tinymce.html" class="submenu-link">TinyMCE</a>
-                        
-                    </li>
-                    
-                </ul>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  ">
-                <a href="../../../../../dash/table.html" class='sidebar-link'>
-                    <i class="bi bi-grid-1x2-fill"></i>
-                    <span>Table</span>
-                </a>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  has-sub">
-                <a href="#" class='sidebar-link'>
-                    <i class="bi bi-file-earmark-spreadsheet-fill"></i>
-                    <span>Datatables</span>
-                </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  ">
-                        <a href="table-datatable.php" class="submenu-link">Datatable</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/table-datatable-jquery.html" class="submenu-link">Datatable (jQuery)</a>
-                        
-                    </li>
-                    
-                </ul>
-                
-
-            </li>
-            
-            <li class="sidebar-title">Extra UI</li>
-            
-            <li
-                class="sidebar-item  has-sub">
-                <a href="#" class='sidebar-link'>
-                    <i class="bi bi-pentagon-fill"></i>
-                    <span>Widgets</span>
-                </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/ui-widgets-chatbox.html" class="submenu-link">Chatbox</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/ui-widgets-pricing.html" class="submenu-link">Pricing</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/ui-widgets-todolist.html" class="submenu-link">To-do List</a>
-                        
-                    </li>
-                    
-                </ul>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  has-sub">
-                <a href="#" class='sidebar-link'>
-                    <i class="bi bi-egg-fill"></i>
-                    <span>Icons</span>
-                </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/ui-icons-bootstrap-icons.html" class="submenu-link">Bootstrap Icons </a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/ui-icons-fontawesome.html" class="submenu-link">Fontawesome</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/ui-icons-dripicons.html" class="submenu-link">Dripicons</a>
-                        
-                    </li>
-                    
-                </ul>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  has-sub">
-                <a href="#" class='sidebar-link'>
-                    <i class="bi bi-bar-chart-fill"></i>
-                    <span>Charts</span>
-                </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/ui-chart-chartjs.html" class="submenu-link">ChartJS</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/ui-chart-apexcharts.html" class="submenu-link">Apexcharts</a>
-                        
-                    </li>
-                    
-                </ul>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  ">
-                <a href="../../../../../dash/ui-file-uploader.html" class='sidebar-link'>
-                    <i class="bi bi-cloud-arrow-up-fill"></i>
-                    <span>File Uploader</span>
-                </a>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  has-sub">
-                <a href="#" class='sidebar-link'>
-                    <i class="bi bi-map-fill"></i>
-                    <span>Maps</span>
-                </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/ui-map-google-map.html" class="submenu-link">Google Map</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/ui-map-jsvectormap.html" class="submenu-link">JS Vector Map</a>
-                        
-                    </li>
-                    
-                </ul>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  has-sub">
-                <a href="#" class='sidebar-link'>
-                    <i class="bi bi-three-dots"></i>
-                    <span>Multi-level Menu</span>
-                </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  has-sub">
-                        <a href="#" class="submenu-link">First Level</a>
-                        
-                        <ul class="submenu submenu-level-2 ">
-
-                            
-                            <li class="submenu-item ">
-                                <a href="../../../../../dash/ui-multi-level-menu.html" class="submenu-link">Second Level</a>
-                            </li>
-                            
-                            <li class="submenu-item ">
-                                <a href="#" class="submenu-link">Second Level Menu</a>
-                            </li>
-                            
-
-                        </ul>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  has-sub">
-                        <a href="#" class="submenu-link">Another Menu</a>
-                        
-                        <ul class="submenu submenu-level-2 ">
-
-                            
-                            <li class="submenu-item ">
-                                <a href="#" class="submenu-link">Second Level Menu</a>
-                            </li>
-                            
-
-                        </ul>
-                        
-                    </li>
-                    
-                </ul>
-                
-
-            </li>
-            
-            <li class="sidebar-title">Pages</li>
-            
-            <li
-                class="sidebar-item  ">
-                <a href="application-email.html" class='sidebar-link'>
-                    <i class="bi bi-envelope-fill"></i>
-                    <span>Email Application</span>
-                </a>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  ">
-                <a href="../../../../../dash/application-chat.html" class='sidebar-link'>
-                    <i class="bi bi-chat-dots-fill"></i>
-                    <span>Chat Application</span>
-                </a>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  ">
-                <a href="../../../../../dash/application-gallery.html" class='sidebar-link'>
-                    <i class="bi bi-image-fill"></i>
-                    <span>Photo Gallery</span>
-                </a>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  ">
-                <a href="../../../../../dash/application-checkout.html" class='sidebar-link'>
-                    <i class="bi bi-basket-fill"></i>
-                    <span>Checkout Page</span>
-                </a>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  has-sub">
-                <a href="#" class='sidebar-link'>
-                    <i class="bi bi-person-badge-fill"></i>
-                    <span>Authentication</span>
-                </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../session/auth-login.html" class="submenu-link">Login</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../Customers/RegCustomer.html" class="submenu-link">Register</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../../../dash/auth-forgot-password.html" class="submenu-link">Forgot Password</a>
-                        
-                    </li>
-                    
-                </ul>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  has-sub">
-                <a href="#" class='sidebar-link'>
-                    <i class="bi bi-x-octagon-fill"></i>
-                    <span>Errors</span>
-                </a>
-                
-                <ul class="submenu ">
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../errors/error-403.html" class="submenu-link">403</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../errors/error-404.html" class="submenu-link">404</a>
-                        
-                    </li>
-                    
-                    <li class="submenu-item  ">
-                        <a href="../../../errors/error-500.html" class="submenu-link">500</a>
-                        
-                    </li>
-                    
-                </ul>
-                
-
-            </li>
-            
-            <li class="sidebar-title">Raise Support</li>
-            
-            <li
-                class="sidebar-item  ">
-                <a href="https://zuramai.github.io/mazer/docs" class='sidebar-link'>
-                    <i class="bi bi-life-preserver"></i>
-                    <span>Documentation</span>
-                </a>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  ">
-                <a href="https://github.com/zuramai/mazer/blob/main/CONTRIBUTING.md" class='sidebar-link'>
-                    <i class="bi bi-puzzle"></i>
-                    <span>Contribute</span>
-                </a>
-                
-
-            </li>
-            
-            <li
-                class="sidebar-item  ">
-                <a href="https://github.com/zuramai/mazer#donation" class='sidebar-link'>
-                    <i class="bi bi-cash"></i>
-                    <span>Donate</span>
-                </a>
-                
-
-            </li>
-            
         </ul>
     </div>
 </div>
@@ -870,23 +256,6 @@ if($result->num_rows > 0) {
                     </div>
                 </div>
                 <div class="col-6 col-lg-3 col-md-6">
-                    <div class="card"> 
-                        <div class="card-body px-4 py-4-5">
-                            <div class="row">
-                                <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
-                                    <div class="stats-icon blue mb-2">
-                                        <i class="iconly-boldProfile"></i>
-                                    </div>
-                                </div>
-                                <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                    <h6 class="text-muted font-semibold">Sedi</h6>
-                                    <h6 class="font-extrabold mb-0">183.000</h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-3 col-md-6">
                     <div class="card">
                         <div class="card-body px-4 py-4-5">
                             <div class="row">
@@ -898,7 +267,7 @@ if($result->num_rows > 0) {
                                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
                                     <h6 class="text-muted font-semibold">Clienti</h6>
                                     <h6 class="font-extrabold mb-0">
-                                        <?php echo $rowNumOrder["COUNT(users.user_id)"] ?>
+                                        <?php echo $rowNumOrder["Conto"] ?>
                                     </h6>
                                 </div>
                             </div>
@@ -938,85 +307,11 @@ if($result->num_rows > 0) {
                 </div>
             </div>
             <div class="row">
-                <div class="col-12 col-xl-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Statistiche prodotti</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-7">
-                                    <div class="d-flex align-items-center">
-                                        <svg class="bi text-primary" width="32" height="32" fill="blue"
-                                            style="width:10px">
-                                            <use
-                                                xlink:href="assets/static/images/bootstrap-icons.svg#circle-fill" />
-                                        </svg>
-                                        <h5 class="mb-0 ms-3">Europe</h5>
-                                    </div>
-                                </div>
-                                <div class="col-5">
-                                    <h5 class="mb-0 text-end">
-                                        <?php
 
-                                        ?>
-                                    </h5>
-                                </div>
-                                <div class="col-12">
-                                    <div id="chart-europe"></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-7">
-                                    <div class="d-flex align-items-center">
-                                        <svg class="bi text-success" width="32" height="32" fill="blue"
-                                            style="width:10px">
-                                            <use
-                                                xlink:href="assets/static/images/bootstrap-icons.svg#circle-fill" />
-                                        </svg>
-                                        <h5 class="mb-0 ms-3">America</h5>
-                                    </div>
-                                </div>
-                                <div class="col-5">
-                                    <h5 class="mb-0 text-end">
-                                        <?php
-
-                                        ?>
-                                    </h5>
-                                </div>
-                                <div class="col-12">
-                                    <div id="chart-america"></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-7">
-                                    <div class="d-flex align-items-center">
-                                        <svg class="bi text-danger" width="32" height="32" fill="blue"
-                                            style="width:10px">
-                                            <use
-                                                xlink:href="assets/static/images/bootstrap-icons.svg#circle-fill" />
-                                        </svg>
-                                        <h5 class="mb-0 ms-3">Indonesia</h5>
-                                    </div>
-                                </div>
-                                <div class="col-5">
-                                    <h5 class="mb-0 text-end">
-                                        <?php
-
-                                        ?>
-                                    </h5>
-                                </div>
-                                <div class="col-12">
-                                    <div id="chart-indonesia"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="col-12 col-xl-8">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Ultime Recensioni</h4>
+                            <h4>Ultime Candidature</h4>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -1024,38 +319,28 @@ if($result->num_rows > 0) {
                                     <thead>
                                         <tr>
                                             <th>Nome</th>
-                                            <th>Commento</th>
+                                            <th>Posizione desiderata</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="col-3">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar avatar-md">
-                                                        <img src="../../../../assets/bootstrap/compiled/jpg/5.jpg" alt="propic">
-                                                    </div>
-                                                    <p class="font-bold ms-3 mb-0">Si Cantik</p>
-                                                </div>
-                                            </td>
-                                            <td class="col-auto">
-                                                <p class=" mb-0">Congratulations on your graduation!</p>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="col-3">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar avatar-md">
-                                                        <img src="../../../../assets/bootstrap/compiled/jpg/2.jpg" alt="propic">
-                                                    </div>
-                                                    <p class="font-bold ms-3 mb-0">Si Ganteng</p>
-                                                </div>
-                                            </td>
-                                            <td class="col-auto">
-                                                <p class=" mb-0">Wow amazing design! Can you make another tutorial for
-                                                    this design?</p>
-                                            </td>
-                                        </tr>
-                                    </tbody>
+                                    <?php
+                                    // Output di ogni riga
+                                    while($row = $resultLastApply->fetch_assoc()) {
+                                    $nome_completo = htmlspecialchars($row["name"] . " " . $row["l_name"]);
+                                    $posizione = htmlspecialchars($row["role"]);
+                                    ?>
+                                    <tr>
+                                        <td class="col-3">
+                                            <div class="d-flex align-items-center">
+                                                <p class="font-bold ms-3 mb-0"><?php echo $nome_completo; ?></p>
+                                            </div>
+                                        </td>
+                                        <td class="col-auto">
+                                            <p class="mb-0"><?php echo $posizione; ?></p>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                    }
+                                    ?>
                                 </table>
                             </div>
                         </div>
@@ -1067,9 +352,6 @@ if($result->num_rows > 0) {
             <div class="card">
                 <div class="card-body py-4 px-4">
                     <div class="d-flex align-items-center">
-                        <div class="avatar avatar-xl">
-                            <img src="../../../../assets/bootstrap/compiled/jpg/1.jpg" alt="Face 1">
-                        </div>
                         <div class="ms-3 name">
                             <h5 class="font-bold">
                                 <?php echo $identityRow["name"] . " " . $identityRow["l_name"]?>
@@ -1083,49 +365,32 @@ if($result->num_rows > 0) {
             </div>
             <div class="card">
                 <div class="card-header">
-                    <h4>Comande in sospeso</h4>
+                    <h4>Ultimi ordini</h4>
                 </div>
                 <div class="card-content pb-4">
-                    <div class="recent-message d-flex px-4 py-3">
-                        <div class="avatar avatar-lg">
-                            <img src="../../../../assets/bootstrap/compiled/jpg/4.jpg" alt="propic">
+
+                    <?php
+                    // Output di ogni riga
+                    while($row = $resultTopOrders->fetch_assoc()) {
+
+
+                        ?>
+                        <div class="recent-message d-flex px-4 py-3">
+
+                            <div class="name ms-4">
+                                <h5 class="mb-1"><?php echo htmlspecialchars($row["name"] . " " . $row["l_name"]); ?></h5>
+                                <h6 class="text-muted mb-0">€<?php echo htmlspecialchars($row["subtotal"]); ?> <?php echo htmlspecialchars($row["status"]); ?></h6>
+                            </div>
                         </div>
-                        <div class="name ms-4">
-                            <h5 class="mb-1">Hank Schrader</h5>
-                            <h6 class="text-muted mb-0">@johnducky</h6>
-                        </div>
-                    </div>
-                    <div class="recent-message d-flex px-4 py-3">
-                        <div class="avatar avatar-lg">
-                            <img src="../../../../assets/bootstrap/compiled/jpg/5.jpg" alt="propic">
-                        </div>
-                        <div class="name ms-4">
-                            <h5 class="mb-1">Dean Winchester</h5>
-                            <h6 class="text-muted mb-0">@imdean</h6>
-                        </div>
-                    </div>
-                    <div class="recent-message d-flex px-4 py-3">
-                        <div class="avatar avatar-lg">
-                            <img src="../../../../assets/bootstrap/compiled/jpg/1.jpg" alt="propic">
-                        </div>
-                        <div class="name ms-4">
-                            <h5 class="mb-1">John Dodol</h5>
-                            <h6 class="text-muted mb-0">@dodoljohn</h6>
-                        </div>
-                    </div>
+                        <?php
+                    }
+                    ?>
                     <div class="px-4">
-                        <button class='btn btn-block btn-xl btn-outline-primary font-bold mt-3'>Vai agli ordini</button>
+                        <a href="table-datatable.php" class="btn btn-block btn-xl btn-outline-primary font-bold mt-3">Vai agli ordini</a>
                     </div>
                 </div>
             </div> 
-            <div class="card">
-                <div class="card-header">
-                    <h4>Comande</h4>
-                </div>
-                <div class="card-body">
-                    <div id="chart-visitors-profile"></div>
-                </div>
-            </div>
+
         </div>
     </section>
 </div>
@@ -1146,10 +411,30 @@ if($result->num_rows > 0) {
     <script src="../../../../assets/bootstrap/compiled/js/app.js"></script>
     
 
-    
-<!-- Need: Apexcharts -->
+
 <script src="../../../../assets/bootstrap/extensions/apexcharts/apexcharts.min.js"></script>
-<script src="../../../../assets/bootstrap/static/js/pages/dashboard.js"></script>
+
+    <script>
+        var options = {
+            chart: {
+                type: 'bar',
+                height: 350
+            },
+            series: [{
+                name: 'Ordini',
+                data: <?= json_encode($data) ?>
+            }],
+            xaxis: {
+                categories: <?= json_encode($labels) ?>,
+                title: {
+                    text: 'Mese'
+                }
+            },
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart-profile-visit"), options);
+        chart.render();
+    </script>
 
 </body>
 

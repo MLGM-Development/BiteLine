@@ -40,7 +40,6 @@
     background: linear-gradient(180deg, #282828, #282828);
 }
 
-
 header{
     position: fixed;
     display: flex;
@@ -51,7 +50,7 @@ header{
     transform: translateY(-100px);
     transition: .4s ease-in-out;
     font-family: "Mulish", serif;
-    z-index: 2;
+    z-index: 5;
 }
 
 .left {

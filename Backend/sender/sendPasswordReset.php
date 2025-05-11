@@ -135,11 +135,7 @@ if($stmt->affected_rows){
     </head>
     <body>
   <div class="container">
-    <div class="header">
-      <div class="logo">
-        <div class="logo-text">BL</div>
-      </div>
-    </div>
+
     
     <div class="card">
       <h1>Reimposta la tua password</h1>

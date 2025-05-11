@@ -37,14 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
     loadComponents(
         "#header",
         "/BiteLine/Frontend/components/Header/header.html",
-        "/BiteLine/Frontend/assets/css/styleComponent/header.css",
+        "/BiteLine/Frontend/assets/css/styleComponent/headerStyle.css",
         "/BiteLine/Frontend/components/Header/headerScript.js"  // Nuovo parametro JS
     );
 
     loadComponents(
         "#footer",
-        "/BiteLine/Frontend/components/Footer/footer.html",
-        "/BiteLine/Frontend/assets/css/styleComponent/footer.css",
+        "/BiteLine/Frontend/components/Footer/footerComponent.html",
+        "/BiteLine/Frontend/assets/css/styleComponent/footerStyle.css",
         "/BiteLine/Frontend/components/Footer/footer.js"  // Nuovo parametro JS
     );
 });

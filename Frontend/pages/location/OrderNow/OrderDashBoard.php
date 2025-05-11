@@ -53,8 +53,8 @@ while ($row = $result->fetch_assoc()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu | BiteLine</title>
-
-    <link rel="stylesheet" href="../../../assets/css/OrderBoard.css">
+    <link rel="shortcut icon" href="../../../assets/media/images/favicon/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../../assets/css/OrderDash.css">
 </head>
 
 <body>
@@ -66,7 +66,7 @@ while ($row = $result->fetch_assoc()) {
             <div class="mobile-cart-close" id="mobileCartClose">×</div>
         </div>
         <div class="mobile-cart-items" id="mobileCartItems">
-            <!-- Mobile cart items will be displayed here -->
+
         </div>
         <div class="mobile-cart-footer">
             <div class="cart-total">
@@ -116,7 +116,6 @@ while ($row = $result->fetch_assoc()) {
                 <div class="cart-count" id="cartCount">0</div>
             </div>
             <div class="cart-items" id="cartItems">
-                <!-- Cart items will be displayed here -->
                 <div class="cart-empty" id="cartEmpty">Carrello vuoto</div>
             </div>
             <div class="cart-total">

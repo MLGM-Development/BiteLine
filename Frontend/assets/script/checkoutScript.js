@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (cartData.items.length === 0) {
         // If cart is empty, redirect back to menu
-        alert('Your cart is empty. Please add items to your cart before checkout.');
+        alert('Il tuo carrello è vuoto.');
         window.location.href = '../../restaurants/menu.php?restaurant_id=' + cartData.restaurantId;
         return;
     }
@@ -179,58 +179,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Form submission
-    submitButton.addEventListener('click', function() {
-        // Simple validation
-        let isValid = true;
-
-        if (cardNumberInput.value.length < 19) {
-            isValid = false;
-            cardNumberInput.classList.add('error');
-        } else {
-            cardNumberInput.classList.remove('error');
-        }
-
-        if (cardHolderInput.value.trim() === '') {
-            isValid = false;
-            cardHolderInput.classList.add('error');
-        } else {
-            cardHolderInput.classList.remove('error');
-        }
-
-        if (expiryDateInput.value.length < 5) {
-            isValid = false;
-            expiryDateInput.classList.add('error');
-        } else {
-            expiryDateInput.classList.remove('error');
-        }
-
-        if (cvcInput.value.length < 3) {
-            isValid = false;
-            cvcInput.classList.add('error');
-            cvcError.textContent = 'CVC must be 3 digits';
-        } else {
-            cvcInput.classList.remove('error');
-            cvcError.textContent = '';
-        }
-
-        if (isValid) {
-            // Simulate successful payment
-            submitButton.textContent = 'Processing...';
-            submitButton.disabled = true;
-
-            setTimeout(() => {
-                submitButton.textContent = 'Payment Successful ✓';
-                submitButton.style.backgroundColor = 'var(--success)';
-
-                // Redirect after payment
-                setTimeout(() => {
-                    alert('Payment processed successfully! Thank you for your order.');
-                }, 1500);
-            }, 2000);
-        }
-    });
-
     submitButton.addEventListener('click', function() {
         // Simple validation
         let isValid = true;
@@ -262,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (cvcInput.value.length < 3) {
                 isValid = false;
                 cvcInput.classList.add('error');
-                cvcError.textContent = 'CVC must be 3 digits';
+                cvcError.textContent = 'Il CVC deve essere di almeno 3 cifre';
             } else {
                 cvcInput.classList.remove('error');
                 cvcError.textContent = '';
@@ -303,11 +251,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // For now, we'll simulate the process
 
             // Simulate successful payment
-            submitButton.textContent = 'Processing...';
+            submitButton.textContent = 'Transazione in corso...';
             submitButton.disabled = true;
 
             setTimeout(() => {
-                submitButton.textContent = 'Payment Successful ✓';
+                submitButton.textContent = 'Transazione approvata ✓';
                 submitButton.style.backgroundColor = 'var(--success)';
 
                 // Clear the cart after successful payment
@@ -315,7 +263,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Redirect after payment
                 setTimeout(() => {
-                    alert('Payment processed successfully! Thank you for your order.');
                     // Redirect to a confirmation page or back to the restaurant
                     window.location.href = '/BiteLine/Frontend/pages/location/OrderNow/confirmation.php?order_id=' + generateOrderId();
                 }, 1500);

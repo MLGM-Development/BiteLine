@@ -44,7 +44,8 @@ $userData = $result->fetch_assoc();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../../assets/css/universal/reset.css">
-    <link rel="stylesheet" href="../../../assets/css/UserPageStyle.css">
+    <link rel="stylesheet" href="../../../assets/css/userpageStyle.css">
+    <link rel="shortcut icon" href="../../../assets/media/images/favicon/favicon.png" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
@@ -62,7 +63,19 @@ $userData = $result->fetch_assoc();
 
     <div class="logout-wrapper">
         <button id="lobtn">Logout</button>
+
     </div>
+
+    <?php
+    if ($isOwner) {
+        echo '<div class="dashboard-navigation">
+            <a href="../Owners/dashboard/ownIndexDash.php" class="dashboard-btn">
+                <i class="fas fa-chart-line"></i> Dashboard Proprietario
+            </a>
+          </div>';
+    }
+    ?>
+
 
     <div class="profile-grid">
         <div class="card">
@@ -339,7 +352,7 @@ $userData = $result->fetch_assoc();
 <footer id="footer"></footer>
 
 <script src="../../../assets/script/logout.js"></script>
-<script src="../../../routes/componentLoader.js"></script>
+<script src="../../../routes/componentLoaderScript.js"></script>
 
 </body>
 </html>
